@@ -19,8 +19,12 @@ canvas#c{display:block;width:100vw;height:100vh;cursor:pointer;touch-action:none
 .bar.full i{background:linear-gradient(90deg,#ffc36b,#f29a4a)}
 #bagIcons{display:flex;flex-wrap:wrap;max-width:200px;gap:6px 8px;font-size:13px;font-weight:800}
 #bagIcons span{display:flex;align-items:center;gap:2px}
-#fav{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);font-size:14px;pointer-events:none;white-space:nowrap}
-#fav b{color:#c2577d}
+#foodPill{font-size:14px;min-width:170px;box-sizing:border-box}#foodLbl{min-width:44px}.bar.starve i{background:linear-gradient(90deg,#ff8a7a,#e0503f)}
+#favPill{font-size:13px;flex-direction:column;align-items:stretch;gap:3px;min-width:170px;max-width:220px;box-sizing:border-box;pointer-events:auto;cursor:pointer;border-color:#c2577d}
+#favPill .hd{display:flex;align-items:center;gap:6px;font-size:12px;color:#8a4a62}#favPill .hd i{margin-left:auto;font-style:normal;opacity:.75;font-variant-numeric:tabular-nums}
+#favPill .it{display:flex;align-items:center;gap:6px;font-size:14px}#favPill .it b{color:#c2577d}#favPill .bn{margin-left:auto;background:#c2577d;color:#fff;border-radius:8px;padding:1px 6px;font-size:12px}
+#favPill .sub{font-size:11.5px;opacity:.7;font-weight:700}#favPill .bar{height:6px}#favPill .bar i{background:linear-gradient(90deg,#f6a5c4,#c2577d);transition:width 1s linear}
+#favPill.pop{animation:favPop .7s ease}@keyframes favPop{0%{transform:scale(1)}35%{transform:scale(1.08);box-shadow:0 0 0 6px rgba(194,87,125,.35)}100%{transform:scale(1)}}
 #btns{position:fixed;right:12px;top:12px;display:flex;gap:8px}
 .btn{font:inherit;font-weight:800;font-size:15px;color:var(--ink);background:var(--cream);border:3px solid var(--brown);border-radius:14px;padding:8px 12px;box-shadow:0 4px 0 rgba(90,55,30,.35);cursor:pointer;display:flex;align-items:center;gap:6px;transition:transform .08s}
 .btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(90,55,30,.35)}
@@ -51,7 +55,7 @@ canvas#c{display:block;width:100vw;height:100vh;cursor:pointer;touch-action:none
 .confirm .nm{font-weight:900;font-size:16px}.confirm .ds{font-size:13px}.cbtns{display:flex;gap:8px;justify-content:flex-end;margin-top:4px}
 #resetOv{position:fixed;inset:0;z-index:50;background:#fff7ea;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px;color:#7a4e33;animation:tin .4s ease-out}
 .btn:focus-visible{outline:3px solid #4d79b8;outline-offset:2px}
-#panelHead.tailor{background:repeating-linear-gradient(90deg,#c06c9a 0 28px,#f6ecd8 28px 56px)}#panelHead.smith{background:repeating-linear-gradient(90deg,#6b6f78 0 28px,#8a8f99 28px 56px)}#panelHead.cart{background:repeating-linear-gradient(90deg,#b5543a 0 28px,#d07a5a 28px 56px)}#panelHead.fish{background:repeating-linear-gradient(90deg,#4d79b8 0 28px,#7aa6d8 28px 56px)}
+#panelHead.tailor{background:repeating-linear-gradient(90deg,#c06c9a 0 28px,#f6ecd8 28px 56px)}#panelHead.smith{background:repeating-linear-gradient(90deg,#6b6f78 0 28px,#8a8f99 28px 56px)}#panelHead.cart{background:repeating-linear-gradient(90deg,#b5543a 0 28px,#d07a5a 28px 56px)}#panelHead.fish{background:repeating-linear-gradient(90deg,#4d79b8 0 28px,#7aa6d8 28px 56px)}#panelHead.food{background:repeating-linear-gradient(90deg,#4f8a3a 0 28px,#fbf6ea 28px 56px)}
 .pvBox{display:flex;gap:12px;align-items:center;background:linear-gradient(#eef6e4,#dcebc8);border:2px solid #cfe0b8;border-radius:16px;padding:8px}
 .pvBox canvas{width:150px;height:156px;flex:none}
 .pvInfo{display:flex;flex-direction:column;gap:6px;font-size:13px}.pvInfo b{font-size:15px}.pvInfo .btn{align-self:flex-start;font-size:13px;padding:5px 10px}
@@ -115,7 +119,7 @@ canvas#c{display:block;width:100vw;height:100vh;cursor:pointer;touch-action:none
 .btn,.heroC,.tab,.swc{touch-action:manipulation;-webkit-touch-callout:none}
 @media (max-width:600px){#goldPill{font-size:17px;padding:4px 10px}#bagPill{min-width:128px;font-size:13px;padding:4px 10px}#bagIcons{max-width:140px}
   #btns{flex-direction:column;top:10px;right:10px;gap:6px}.btn{font-size:13px;padding:7px 8px}.btn span.l{display:none}
-  #fav{font-size:11px;bottom:10px;padding:4px 10px}#zone b{font-size:22px}#zone span{font-size:12px}#zone{top:20%}
+  #favPill,#foodPill{min-width:128px;font-size:12px;padding:4px 10px}#favPill .it{font-size:12.5px}#zone b{font-size:22px}#zone span{font-size:12px}#zone{top:20%}
   #toast{top:auto;bottom:150px;flex-direction:column-reverse;width:86vw}.toast{font-size:13px;text-align:center}
   #actBtn{bottom:52px;right:12px}}
 </style>
@@ -130,6 +134,8 @@ canvas#c{display:block;width:100vw;height:100vh;cursor:pointer;touch-action:none
     <div class="bar" id="bagBarWrap"><i id="bagBar"></i></div>
     <div id="bagIcons"></div>
   </div>
+  <div class="pill" id="favPill" title="Pazarcının aradığı: %50 fazla öder"><div class="hd"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M3 9l2-5h14l2 5z" fill="#e65c5c" stroke="#7a4e33" stroke-width="1.8"/><path d="M4 9v11h16V9" fill="#fff3dc" stroke="#7a4e33" stroke-width="1.8"/></svg>Pazarcı arıyor<i id="favTime">150 sn</i></div><div class="it" id="favItem"></div><div class="sub" id="favSub"></div><div class="bar"><i id="favBar"></i></div></div>
+  <div class="pill" id="foodPill"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M7 3v8M5 3v5c0 2 4 2 4 0V3M7 11v10" fill="none" stroke="#7a4e33" stroke-width="2" stroke-linecap="round"/><path d="M16 3c-2 1-3 4-3 7 0 1 1 2 2 2h1v9" fill="#f6d6a8" stroke="#7a4e33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="foodLbl">Tok</span><div class="bar" id="foodBarWrap" style="flex:1;min-width:70px"><i id="foodBar"></i></div></div>
 </div>
 
 <div id="btns">
@@ -142,7 +148,6 @@ canvas#c{display:block;width:100vw;height:100vh;cursor:pointer;touch-action:none
 
 <button class="btn" id="actBtn" aria-label="Kaz"><svg viewBox="0 0 24 24" width="30" height="30"><path d="M6 19L16 9" stroke="#8a5a3b" stroke-width="2.6" stroke-linecap="round"/><path d="M9 5c4-2 8 0 10 4" fill="none" stroke="#9aa3ad" stroke-width="3" stroke-linecap="round"/></svg><b id="actTxt">Kaz</b></button>
 <button class="btn gold" id="sellPrompt">Hepsini Sat</button>
-<div id="fav" class="pill"></div>
 <div id="toast"></div>
 <div id="zone"></div>
 
@@ -163,12 +168,14 @@ canvas#c{display:block;width:100vw;height:100vh;cursor:pointer;touch-action:none
       <button class="heroC" data-h="f"><canvas width="260" height="250"></canvas><b>Umay</b><span></span></button>
       <button class="heroC" data-h="m"><canvas width="260" height="250"></canvas><b>Korkut</b><span></span></button>
     </div>
-    <div class="keys">Tıkla ya da basılı tut / WASD: yürü · E: kaz · Boşluk: zıpla · Dükkânlara tıkla</div>
+    <div class="keys">Tıkla ya da basılı tut / WASD: yürü · Boşluk / E: kaz · Shift: zıpla · Dükkânlara tıkla</div>
     <button class="btn green" id="startBtn" disabled>Bir karakter seç</button>
   </div>
 </div>
 
 <script>
+(function(){"use strict";
+
 'use strict';
 /* =========================================================
    Huzurlu Maden — cozy izometrik maden toplama oyunu
@@ -212,8 +219,21 @@ const VEHICLES=[
   {name:'Yürüyerek',cost:0,speed:1,cap:0},
   {name:'Ahşap El Arabası',cost:90,speed:1.2,cap:12,desc:'Arkandan iple gelir · Hız +%20 · Çanta +12'},
   {name:'Maden Vagoneti',cost:400,speed:1.45,cap:30,desc:'Arkandan iple gelir · Hız +%45 · Çanta +30'},
-  {name:'Minik Çiftlik Traktörü',cost:1200,speed:1.85,cap:60,desc:'Hız +%85 · Çanta +60'}
+  {name:'Minik Çiftlik Traktörü',cost:1200,speed:1.85,cap:60,desc:'Hız +%85 · Çanta +60'},
+  {name:'Traktör Römorku',cost:2600,speed:1.85,cap:120,desc:'Traktörün arkasına takılır · Hız +%85 · Çanta +120'}
 ];
+// ---------- restoran menüsü ----------
+const FOODS=[
+  {id:'ayran',name:'Ayran',cost:6,tok:12,desc:'Serinletir · +12 tokluk'},
+  {id:'corba',name:'Mercimek Çorbası',cost:12,tok:28,desc:'Limonlu, sıcacık · +28 tokluk'},
+  {id:'gozleme',name:'Peynirli Gözleme',cost:20,tok:38,desc:'Sacda yeni pişti · +38 tokluk'},
+  {id:'manti',name:'Kayseri Mantısı',cost:32,tok:55,desc:'Yoğurtlu, tereyağlı · +55 tokluk'},
+  {id:'karniyarik',name:'Karnıyarık',cost:38,tok:62,desc:'Pilavıyla birlikte · +62 tokluk'},
+  {id:'iskender',name:'İskender',cost:60,tok:90,buff:'swing',bt:150,desc:'+90 tokluk · 150 sn kazma vuruşu +%12 hızlı'},
+  {id:'kunefe',name:'Künefe',cost:45,tok:30,buff:'speed',bt:150,desc:'+30 tokluk · 150 sn yürüme +%10'},
+  {id:'kahve',name:'Türk Kahvesi',cost:25,tok:6,buff:'luck',bt:180,desc:'+6 tokluk · 180 sn şans +%5'}
+];
+const FOOD_BY=Object.fromEntries(FOODS.map(f=>[f.id,f]));
 const UPG={
   magnet:{name:'Çekim Alanı',costs:[40,140,380],desc:'Taşlar daha uzaktan çekilir'},
   luck:{name:'Şanslı Vuruş',costs:[60,200,500],desc:'Ekstra kristal düşme şansı'}
@@ -396,25 +416,48 @@ function drawGem(c,type,x,y,s=1,t=0){const it=ITEMS[type];if(!it)return;c.save()
   default:circ(c,0,-5,5,col)}
   c.restore()}
 
-const SAVE_KEY='huzurlu-maden-v1';
-const G={gold:0,bag:{},rod:0,fishBest:{},pick:0,outfit:{hat:false,overalls:false,vest:false,cape:false},vehicle:0,magnet:0,luck:0,found:{},relics:{},earned:0};
+const SAVE_KEY='huzurlu-maden-v2',LEGACY_KEY='huzurlu-maden-v1';
+const G={tok:100,gold:0,bag:{},rod:0,fishBest:{},pick:0,outfit:{hat:false,overalls:false,vest:false,cape:false},vehicle:0,magnet:0,luck:0,found:{},relics:{},earned:0};
 function cleanSave(){for(const k in G.bag)if(!ITEMS[k])delete G.bag[k];for(const k in G.found)if(!ITEMS[k])delete G.found[k];if(!ITEMS[fav])fav='kuvars'}
-function load(){try{const s=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');if(s){Object.assign(G,s);G.bag=Object.assign({},s.bag);G.fishBest=s.fishBest||{};G.outfit=Object.assign({hat:false,overalls:false,vest:false,cape:false},s.outfit);G.found=s.found||{};G.relics=s.relics||{};}}catch(e){}}
+// ---------- güvenli kayıt (şifreleme + bütünlük imzası) ----------
+const SEC=(()=>{const K=[0x48,0x75,0x7a,0x75,0x72,0x6c,0x75,0x4d,0x61,0x64,0x65,0x6e,0x2d,0x9c,0x3e,0x17,0xa5,0x5b,0xd2,0x71,0x0f,0xe4,0x88,0x2b];
+  const h32=(bytes,seed)=>{let h=(0x811c9dc5^seed)>>>0;for(let i=0;i<bytes.length;i++){h^=bytes[i];h=Math.imul(h,0x01000193)>>>0;h^=h>>>13}h=Math.imul(h^(h>>>16),0x85ebca6b)>>>0;h=Math.imul(h^(h>>>13),0xc2b2ae35)>>>0;return(h^(h>>>16))>>>0};
+  const mac=(nonce,data)=>{const b=new Uint8Array(K.length+nonce.length+data.length+K.length);b.set(K,0);b.set(nonce,K.length);b.set(data,K.length+nonce.length);b.set(K.slice().reverse(),K.length+nonce.length+data.length);return[h32(b,0x5bd1e995),h32(b,0x27d4eb2f),h32(b.slice().reverse(),0x165667b1)]};
+  const stream=(nonce,n)=>{const seed=h32(new Uint8Array([...K,...nonce]),0x9e3779b9);const r=mulberry32(seed);const o=new Uint8Array(n);for(let i=0;i<n;i++)o[i]=(r()*256)&255;return o};
+  const b64=u=>{let s='';for(let i=0;i<u.length;i+=8192)s+=String.fromCharCode.apply(null,u.subarray(i,i+8192));return btoa(s)};
+  const unb64=s=>{const b=atob(s);const u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u};
+  return{enc(str){const data=new TextEncoder().encode(str);const nonce=new Uint8Array(8);(self.crypto||{}).getRandomValues?crypto.getRandomValues(nonce):nonce.forEach((_,i)=>nonce[i]=Math.random()*256);
+      const ks=stream(nonce,data.length);const c=data.map((v,i)=>v^ks[i]);const m=mac(nonce,data);const out=new Uint8Array(8+12+c.length);out.set(nonce,0);const dv=new DataView(out.buffer);m.forEach((v,i)=>dv.setUint32(8+i*4,v));out.set(c,20);return'HM2.'+b64(out)},
+    dec(txt){if(typeof txt!=='string'||!txt.startsWith('HM2.'))return null;let u;try{u=unb64(txt.slice(4))}catch(e){return null}if(u.length<20)return null;const nonce=u.slice(0,8);const dv=new DataView(u.buffer);const c=u.slice(20);const ks=stream(nonce,c.length);const data=c.map((v,i)=>v^ks[i]);const m=mac(nonce,data);
+      for(let i=0;i<3;i++)if(dv.getUint32(8+i*4)!==m[i])return null;try{return JSON.parse(new TextDecoder().decode(data))}catch(e){return null}}}})();
+let saveTampered=false;
+function sanitize(){const num=(v,lo,hi,d)=>{v=Number(v);return Number.isFinite(v)?clamp(v,lo,hi):d};const int=(v,lo,hi,d)=>Math.floor(num(v,lo,hi,d));
+  G.gold=int(G.gold,0,5e7,0);G.earned=int(G.earned,0,5e8,0);G.pick=int(G.pick,0,PICKS.length-1,0);G.vehicle=int(G.vehicle,0,VEHICLES.length-1,0);G.rod=int(G.rod,0,2,0);G.magnet=int(G.magnet,0,3,0);G.luck=int(G.luck,0,3,0);G.tok=num(G.tok,0,100,100);
+  const bag={};for(const k in G.bag)if(ITEMS[k]){const n=int(G.bag[k],0,9999,0);if(n)bag[k]=n}G.bag=bag}
+function readSave(){let raw=null;try{raw=localStorage.getItem(SAVE_KEY)}catch(e){}
+  if(raw){const s=SEC.dec(raw);if(s)return s;saveTampered=true;return null}
+  let leg=null;try{leg=localStorage.getItem(LEGACY_KEY)}catch(e){}
+  if(leg){try{const s=JSON.parse(leg);if(s&&typeof s==='object'){s.gold=Math.min(Number(s.gold)||0,50000);s.earned=Math.min(Number(s.earned)||0,200000);return s}}catch(e){}}
+  return null}
+function load(){try{const s=readSave();if(s){Object.assign(G,s);G.bag=Object.assign({},s.bag);G.fishBest=s.fishBest||{};G.outfit=Object.assign({hat:false,overalls:false,vest:false,cape:false},s.outfit);G.found=s.found||{};G.relics=s.relics||{};}}catch(e){}sanitize()}
 let resetting=false;
 const SET_KEY='huzurlu-maden-ayar';const SET={vol:.55,muted:false,hints:true};
 try{Object.assign(SET,JSON.parse(localStorage.getItem(SET_KEY)||'{}'))}catch(e){}
 function saveSet(){try{localStorage.setItem(SET_KEY,JSON.stringify(SET))}catch(e){}}
-function save(){if(resetting)return;try{localStorage.setItem(SAVE_KEY,JSON.stringify(G))}catch(e){}}
+function save(){if(resetting)return;try{sanitize();localStorage.setItem(SAVE_KEY,SEC.enc(JSON.stringify(G)));localStorage.removeItem(LEGACY_KEY)}catch(e){}}
 load();
+setTimeout(()=>{if(saveTampered)toast('Kayıt doğrulanamadı: dışarıdan değiştirilmiş kayıt yüklenmedi, oyun baştan başladı.',false,5)},1200);
 
 const stat={
   power:()=>PICKS[G.pick].power,
   hits:d=>clamp(Math.ceil(d.hp*[1,.8,.6,.45][G.pick]),1,5),
-  swing:()=>PICKS[G.pick].swing,
+  swing:()=>PICKS[G.pick].swing*stat.haste()*stat.tired().swing*(P.buff.swing>0?.88:1),
+  haste:()=>Math.max(.55,1-.065*(P.hc||0)),
+  tired:()=>G.tok<12?{speed:.65,swing:1.4,lv:2}:G.tok<35?{speed:.85,swing:1.15,lv:1}:{speed:1,swing:1,lv:0},
   cap:()=>15+VEHICLES[G.vehicle].cap+(worn('deri')?6:worn('spor')?8:worn('heybe')?12:0),
-  speed:()=>3.7*VEHICLES[G.vehicle].speed*(P.huzur>0?1.15:1)*(worn('salvar')?1.08:(worn('sort')||worn('kotsort')||worn('esofman'))?1.05:1),
+  speed:()=>3.7*VEHICLES[G.vehicle].speed*stat.tired().speed*(P.buff.speed>0?1.1:1)*(P.huzur>0?1.15:1)*(worn('salvar')?1.08:(worn('sort')||worn('kotsort')||worn('esofman'))?1.05:1),
   magnet:()=>1.6+G.magnet*1.0+(worn('tulum')?1:0),
-  luck:()=>.05+(CAT.full>0?.05:0)+G.luck*.07+(worn('yelek')?.08:0)+(worn('pelerin')?.05:0)+(worn('bork')?.05:0)+PICKS[G.pick].luck,
+  luck:()=>.05+(CAT.full>0?.05:0)+G.luck*.07+(worn('yelek')?.08:0)+(worn('pelerin')?.05:0)+(worn('bork')?.05:0)+PICKS[G.pick].luck+(P.buff.luck>0?.05:0),
   sell:()=>1+(worn('hasir')?.10:0)+(worn('pelerin')?.15:0)
 };
 const HEROES={m:{name:'Korkut',desc:'Sakin, güler yüzlü, doğa dostu.'},f:{name:'Umay',desc:'Şefkatli, sakin, çiçek sever.'}};
@@ -483,12 +526,12 @@ const biome=new Uint8Array(MW*MH);
 for(let y=0;y<MH;y++)for(let x=0;x<MW;x++){const i=y*MW+x,n=(tnoise[i]-.5)*1.6;let b;
   if(Math.hypot(x-3,y-3)<12.5+n&&y<14+n&&x<15)b=0;else if(x+.5+n<streamX(y+.5))b=1;else b=(y+n<21)?2:3;biome[i]=b}
 const BI=(x,y)=>biome[clamp(Math.floor(y),0,MH-1)*MW+clamp(Math.floor(x),0,MW-1)];
-const LM={ulu:{x:6.5,y:29.5,r:3.4,name:'Ulu Kayın'},mill:{x:12.6,y:1.6,r:2.6,name:'Yel Değirmeni'},mine:{x:33.5,y:4.2,r:3,name:'Eski Maden Ağzı'},pier:{x:5.4,y:17.5,r:1.4},terzi:{x:8.8,y:7.5,r:1.7},demirci:{x:2.6,y:13.6,r:1.9},arabaci:{x:12.8,y:7.6,r:1.9},balikci:{x:5.0,y:19.7,r:1.7}};
+const LM={ulu:{x:6.5,y:29.5,r:3.4,name:'Ulu Kayın'},mill:{x:12.6,y:1.6,r:2.6,name:'Yel Değirmeni'},mine:{x:33.5,y:4.2,r:3,name:'Açıklık'},pier:{x:5.4,y:17.5,r:1.4},terzi:{x:8.8,y:7.5,r:1.7},demirci:{x:2.6,y:13.6,r:1.9},arabaci:{x:12.8,y:7.6,r:1.9},balikci:{x:5.0,y:19.7,r:1.7}};
 const reserved=(x,y)=>Object.values(LM).some(l=>Math.hypot(x+.5-l.x,y+.5-l.y)<l.r);
 // yapılar
 const MARKET={x:3.5,y:2.4}, SELL_SPOT={x:3.6,y:4.1};
 const CAMP={x:3.5,y:10.5}, TENT={x:1.5,y:8.4}, BENCH={x:1.6,y:11.6};
-[[2,1],[3,1],[4,1],[2,2],[3,2],[4,2],[1,8],[1,7],[3,10],[1,11],[12,1],[13,1],[12,0],[13,0],[5,28],[6,28],[7,28],[5,29],[6,29],[7,29],[5,30],[6,30],[7,30],[33,3],[34,3],[33,4],[34,4],[8,7],[9,7],[2,13],[3,13],[12,7],[13,7],[5,19]].forEach(([x,y])=>block[y*MW+x]=1);
+[[2,1],[3,1],[4,1],[2,2],[3,2],[4,2],[1,8],[1,7],[3,10],[1,11],[12,1],[13,1],[12,0],[13,0],[5,28],[6,28],[7,28],[5,29],[6,29],[7,29],[5,30],[6,30],[7,30],[8,7],[9,7],[2,13],[3,13],[12,7],[13,7],[5,19]].forEach(([x,y])=>block[y*MW+x]=1);
 // ağaçlar, kayalar, çiçekler
 const trees=[],rocks=[],flowers=[];
 const BRANGE=[0,1,2,3].map(b=>{let mn=1e9,mx=0;for(let y=0;y<MH;y++)for(let x=0;x<MW;x++)if(biome[y*MW+x]===b&&tile[y*MW+x]===GR){const d=Math.hypot(x-3,y-3);if(d<mn)mn=d;if(d>mx)mx=d}return[Math.max(mn,8),mx-2]});
@@ -513,6 +556,9 @@ for(const cat in PROFS)PROFS[cat].list.forEach((id,idx)=>{let n=rocks.filter(r=>
 trees.forEach(t=>{block[Math.floor(t.y)*MW+Math.floor(t.x)]=0});
 rocks.forEach(r=>{r.kind='rock';const rr=mulberry32(r.seed);r.rr=[];for(let i=0;i<24;i++)r.rr.push(rr())});
 const forage=[];
+const RESTO={x:8.8,y:11.5,spot:{x:8.6,y:12.8}};
+[[8,11],[9,11]].forEach(([x,y])=>{block[y*MW+x]=1});
+for(let i=flowers.length-1;i>=0;i--){const f=flowers[i];if(f.x>6.6&&f.x<10.6&&f.y>10&&f.y<12.6)flowers.splice(i,1)}
 // ---------- harita süsleri ----------
 const lilies=[],reeds=[],fireflies=[],twinkles=[],mists=[],sunflowers=[];
 {const lr=mulberry32(77);const lakeT=[...lakeSet].map(i=>({x:i%MW,y:(i/MW)|0}));
@@ -524,7 +570,7 @@ const lilies=[],reeds=[],fireflies=[],twinkles=[],mists=[],sunflowers=[];
   for(let k=0;k<14;k++){const t=vadiT[Math.floor(lr()*vadiT.length)];const p=iso(t.x+.5,t.y+.5);mists.push({x:p.x,y:p.y,r:60+lr()*70,p:lr()*6})}
   for(let y=3;y<=6;y++)for(let x=10;x<=14;x++)if(tile[y*MW+x]===FI)sunflowers.push({x:x+.5,y:y+.5,p:lr()*6})}
 const DISC=[{id:'ulu',x:LM.ulu.x,y:LM.ulu.y,r:3.6,title:'Ulu Kayın',msg:'Ulu Kayın\'ı buldun! Dallarına renk renk dilek bezleri bağlanmış.'},{id:'mill',x:LM.mill.x,y:LM.mill.y+1.5,r:3.2,title:'Yel Değirmeni',msg:'Yel Değirmeni ve ayçiçeği tarlası. Rüzgâr burada hiç durmuyor.'},
-  {id:'mine',x:LM.mine.x,y:LM.mine.y+1,r:3.4,title:'Eski Maden Ağzı',msg:'Eski Maden Ağzı. Yıllar önce burada çok kazı yapılmış.'},{id:'lake',x:LAKE.x,y:LAKE.y,r:4.6,title:'Nilüfer Gölü',msg:'Nilüfer Gölü! İskeleden olta atabilirsin; gölün balıkları dereden farklı.'}];
+  {id:'lake',x:LAKE.x,y:LAKE.y,r:4.6,title:'Nilüfer Gölü',msg:'Nilüfer Gölü! İskeleden olta atabilirsin; gölün balıkları dereden farklı.'}];
 const SAYINGS=['Ağaç ne kadar yaşlıysa gölgesi o kadar serin olur.','Kökü derin olan rüzgârdan korkmaz.','Sabır, en sert taşı bile yumuşatır.','Dere acele etmez, yine de denize varır.','Toprağa ne verirsen onu alırsın.'];
 const treeTiles=new Set(trees.map(t=>Math.floor(t.y)*MW+Math.floor(t.x)));
 // hayvanlar
@@ -668,7 +714,7 @@ const waterTiles=[];for(let y=0;y<MH;y++)for(let x=0;x<MW;x++)if(tile[y*MW+x]===
 const falls=[];for(let x=0;x<MW;x++){const t=tile[(MH-1)*MW+x];if(t===WA||t===BR)falls.push(x)}
 
 // ---------- oyuncu ----------
-const P={jz:0,jv:0,land:0,huzur:0,huzurCd:0,biome:0,biomeT:0,act:'mine',fish:null,pendingFish:false,tries:0,say:null,sayCd:12,blink:3,happy:0,x:6.5,y:6.5,face:1,walkT:0,moving:false,path:null,target:null,swingT:1,hitPending:false,swingCd:0,bob:0,sellTarget:false};
+const P={hc:0,hcT:0,buff:{swing:0,speed:0,luck:0},tiredLv:0,sweatT:0,jz:0,jv:0,land:0,huzur:0,huzurCd:0,biome:0,biomeT:0,act:'mine',fish:null,pendingFish:false,tries:0,say:null,sayCd:12,blink:3,happy:0,x:6.5,y:6.5,face:1,walkT:0,moving:false,path:null,target:null,swingT:1,hitPending:false,swingCd:0,bob:0,sellTarget:false};
 const keys={};
 let camX=iso(P.x,P.y).x,camY=iso(P.x,P.y).y;
 
@@ -706,12 +752,21 @@ function freeAt(x,y){const r=.22;if(x<r||y<r||x>MW-r||y>MH-r)return false;
   const tx=Math.floor(x),ty=Math.floor(y);for(let j=-1;j<=1;j++)for(let i=-1;i<=1;i++){const xx=tx+i,yy=ty+j;if(xx<0||yy<0||xx>=MW||yy>=MH)continue;const rk=rockAt[yy*MW+xx];if(rk&&rk.alive&&rk.grow>.5&&Math.hypot(rk.x-x,rk.y-y)<.5)return false}
   return true}
 const CART={x:0,y:0,roll:0,init:false,face:1};
-function updateCart(dt){if(G.vehicle!==1&&G.vehicle!==2){CART.init=false;return}const L=G.vehicle===2?1.05:.9;
+function drawTrailerShape(c,x,y,f,roll,fill,ks,t){c.save();c.translate(x,y);c.scale(f,1);
+  c.strokeStyle='#4a4a52';c.lineWidth=2.6;c.lineCap='round';c.beginPath();c.moveTo(14,-9);c.lineTo(27,-8);c.stroke();
+  if(fill>0&&ks&&ks.length){ell(c,-3,-25,17*Math.min(1,fill*1.4),3+fill*5,'#a8754f');for(let i=0;i<Math.min(10,Math.ceil(fill*12));i++)drawGem(c,ks[i%ks.length],-17+i*3.4,-24-(i%3)*1.5-fill*4,.62,t)}
+  poly(c,[-22,-26,16,-26,14,-8,-20,-8],'#c0563f');poly(c,[-22,-26,16,-26,15,-22,-21,-22],'#e07a5a');c.strokeStyle='rgba(90,30,20,.45)';c.lineWidth=1;for(let i=1;i<3;i++){c.beginPath();c.moveTo(-21,-22+i*4.6);c.lineTo(15,-22+i*4.6);c.stroke()}
+  c.fillStyle='#8a3f2c';c.fillRect(-23,-27,3,19);c.fillRect(13,-27,3,19);
+  for(const wx of[-12,6]){circ(c,wx,-4,6.4,'#3c3c44');circ(c,wx,-4,2.8,'#f5c542');c.strokeStyle='#2a2a30';c.lineWidth=1.4;c.beginPath();c.moveTo(wx+Math.cos(roll)*5.4,-4+Math.sin(roll)*5.4);c.lineTo(wx-Math.cos(roll)*5.4,-4-Math.sin(roll)*5.4);c.stroke()}
+  c.restore()}
+function updateCart(dt){if(G.vehicle!==1&&G.vehicle!==2&&G.vehicle!==4){CART.init=false;return}const L=G.vehicle===4?1.55:G.vehicle===2?1.05:.9;
   if(!CART.init||Math.hypot(CART.x-P.x,CART.y-P.y)>4){CART.x=P.x-P.face*.6;CART.y=P.y+P.face*.6;CART.init=true}
   const dx=CART.x-P.x,dy=CART.y-P.y,d=Math.hypot(dx,dy)||1e-3;
   if(d>L){const nx=P.x+dx/d*L,ny=P.y+dy/d*L;const k=1-Math.exp(-30*dt);const ox=CART.x,oy=CART.y;CART.x=lerp(CART.x,nx,k);CART.y=lerp(CART.y,ny,k);CART.roll+=Math.hypot(CART.x-ox,CART.y-oy)*6}
   const sx=(P.x-CART.x)-(P.y-CART.y);if(Math.abs(sx)>.15)CART.face=sx>0?1:-1;CART.d=Math.hypot(CART.x-P.x,CART.y-P.y);CART.L=L}
-function drawCart(t){if(G.vehicle!==1&&G.vehicle!==2)return;const s=iso(CART.x,CART.y),x=s.x,y=s.y,f=CART.face,v=G.vehicle;const ps=iso(P.x,P.y);
+function drawCart(t){if(G.vehicle!==1&&G.vehicle!==2&&G.vehicle!==4)return;const s=iso(CART.x,CART.y),x=s.x,y=s.y,f=CART.face,v=G.vehicle;const ps=iso(P.x,P.y);
+  if(v===4){const hx=x+f*27,hy=y-8,tx=ps.x-P.face*22,ty=ps.y-8-(P.jz||0);ctx.strokeStyle='#4a4a52';ctx.lineWidth=2.6;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(hx,hy);ctx.lineTo(tx,ty);ctx.stroke();
+    shadow(ctx,x,y+2,24,7);drawTrailerShape(ctx,x,y,f,CART.roll,clamp(bagCount()/stat.cap(),0,1),Object.keys(G.bag).filter(k=>G.bag[k]>0),t);return}
   const hx=x+f*(v===1?17:15),hy=y-(v===1?13:14);const px=ps.x-f*4,py=ps.y-20-(Math.abs(Math.sin(P.walkT))*1.8*(P.spdR||0))-(P.jz||0);
   const sag=clamp((CART.L-CART.d)*26,0,14)+3;ctx.strokeStyle='#9a7a4f';ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(px,py);ctx.quadraticCurveTo((px+hx)/2,Math.max(py,hy)+sag,hx,hy);ctx.stroke();ctx.strokeStyle='rgba(255,240,210,.35)';ctx.lineWidth=.5;ctx.stroke();
   shadow(ctx,x,y+2,v===1?18:17,6);ctx.save();ctx.translate(x,y);ctx.scale(f,1);
@@ -786,14 +841,17 @@ function reelIn(){const f=P.fish;if(!f||f.state!=='bite')return;const id=f.fishI
 function doHit(r){if(r.kind==='forage'){harvest(r);return}
   const d=NODES[r.type];const s=iso(r.x,r.y);
   r.dmg=(r.dmg||0)+1;r.squash=1;r.flash=1;
+  if(!r.need){const h=stat.hits(d);r.need=Math.min(5,h+Math.floor((6-h)*Math.pow(Math.random(),1.5)))}
+  P.hc=Math.min(8,(P.hcT>0?P.hc:0)+1);P.hcT=1.35;G.tok=Math.max(0,G.tok-.3);
+  if(P.hc===4||P.hc===8)floatText(s.x,s.y-46,P.hc===8?'Tam ritim!':'Ritim!','#ffd36b');
   if(d.prof==='lokman'){Snd.gather();Snd.noise(.05,{vol:.06,freq:700})}else Snd.hit();
   puff(s.x,s.y-16,6,d.prof==='lokman'?(d.look.leaf||d.look.bark||d.pc):d.pc,{smin:30,smax:90,up:50});
   if(G.pick>=2)for(let i=0;i<3;i++)parts.push({x:s.x+rnd(-8,8),y:s.y-20,vx:rnd(-60,60),vy:rnd(-90,-30),g:120,life:.6,max:.6,size:4,col:G.pick===3?'#bff2ff':'#ffd84a',kind:'star'});
-  if(r.dmg>=stat.hits(d))breakRock(r)}
+  if(r.dmg>=r.need)breakRock(r)}
 function rollTier(d){const L=stat.luck();if(d.t3&&Math.random()<.035+L*.25)return d.t3;if(d.t2&&Math.random()<.13+L*.6)return d.t2;return d.id}
 function breakRock(r){
   const d=NODES[r.type];const s=iso(r.x,r.y);
-  r.alive=false;r.grow=0;r.regrow=rnd(...d.regrow);r.dmg=0;
+  r.alive=false;r.grow=0;r.regrow=rnd(...d.regrow);r.dmg=0;r.need=0;
   if(d.prof==='sarraf')Snd.breakCrystal(784*Math.pow(2,d.idx/14));else if(d.prof==='lokman'){Snd.gather();Snd.tone(660,.3,{vol:.06,wet:.5,delay:.05})}else Snd.breakStone();
   puff(s.x,s.y-12,14,d.pc,{smin:40,smax:130,up:70});
   puff(s.x,s.y-4,8,'rgba(210,190,160,.8)',{smin:10,smax:40,up:10,g:-10,kind:'dust',sz:2.5,lf:1.3});
@@ -836,8 +894,8 @@ function actionPress(){Snd.init();if(P.fish&&P.fish.state==='bite'){reelIn();ret
 addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;const k=e.key.toLowerCase();keys[k]=true;Snd.init();
   if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(k))e.preventDefault();
   if(k==='p'){if(panelOpen==='shop')closePanel();else openShop('pazar')}if(k==='g'){if(panelOpen==='tailor')closePanel();else openTailor(false)}if(k==='b')togglePanel('book');if(k==='m')toggleMute();if(k==='o')togglePanel('settings');if(k==='escape')closePanel();
-  if(k===' '){if(P.fish&&P.fish.state==='bite'){reelIn();return}if(!e.repeat)jump()}
-  if(k==='e'){if(P.fish&&P.fish.state==='bite'){reelIn();return}const r=nearestRock(REACH+.35);if(r){P.target=r;P.path=null;stopFishing()}}});
+  if(k==='shift'){if(!e.repeat)jump()}
+  if(k==='e'||k===' '){if(e.repeat&&P.target)return;if(P.fish&&P.fish.state==='bite'){reelIn();return}const r=nearestRock(REACH+.35);if(r){P.target=r;P.path=null;stopFishing()}}});
 function jump(){if(P.jz>.5||P.jv>0)return;P.jv=165;Snd.tone(420,.14,{type:'triangle',vol:.07,slide:720});Snd.noise(.05,{vol:.03,freq:2200})}
 addEventListener('keyup',e=>{keys[e.key.toLowerCase()]=false});
 addEventListener('blur',()=>{for(const k in keys)keys[k]=false});
@@ -874,7 +932,7 @@ function updateAnimals(dt){
 }
 
 // ---------- güncelleme ----------
-let time=0,birdT=6,saveT=10;
+let time=0,birdT=6,saveT=10,hudT=0;
 function update(dt){
   time+=dt;
   // klavye
@@ -901,7 +959,13 @@ function update(dt){
   if(P.jz>0||P.jv>0){P.jv-=620*dt;P.jz=Math.max(0,(P.jz||0)+P.jv*dt);if(P.jz<=0&&P.jv<0){P.jv=0;P.land=.18;const s=iso(P.x,P.y);puff(s.x,s.y,6,'rgba(210,190,160,.8)',{smin:15,smax:45,up:5,g:-10,kind:'dust',sz:1.8,lf:.8});Snd.tone(150,.08,{type:'triangle',vol:.06,slide:90})}}
   P.land=Math.max(0,(P.land||0)-dt);
   if(P.pendingFish&&!P.path){P.pendingFish=false;beginCast()}
-  if(keys.e&&!P.target&&!P.moving&&!P.fish){const r=nearestRock(REACH+.35);if(r)P.target=r}
+  if((keys.e||keys[' '])&&!P.target&&!P.moving&&!P.fish){const r=nearestRock(REACH+.35);if(r)P.target=r}
+  // ritim ve tokluk
+  P.hcT-=dt;if(P.hcT<=0)P.hc=0;for(const k in P.buff)P.buff[k]=Math.max(0,P.buff[k]-dt);
+  if($('intro').classList.contains('hidden'))G.tok=Math.max(0,G.tok-dt*(.11+(P.moving?.07:0)));
+  {const lv=stat.tired().lv;if(lv!==P.tiredLv){if(lv>P.tiredLv){if(lv===1){say('Karnım acıktı. Restorana uğrasam iyi olur.',3.4);toast('Acıktın: biraz yavaşladın. Köy Restoranı\'nda bir şeyler ye.',false,3.6)}else{say('Çok yoruldum… Bir şeyler yemem lazım.',3.6);toast('Çok yorgunsun: yürüyüşün ve vuruşun ağırlaştı.',false,3.6)}}P.tiredLv=lv;updateHud()}
+    if(lv===2){P.sweatT-=dt;if(P.sweatT<=0){P.sweatT=rnd(.7,1.3);const s=iso(P.x,P.y);parts.push({x:s.x+P.face*8,y:s.y-58-(G.vehicle>=3?14:0),vx:P.face*rnd(10,25),vy:-30,g:180,life:.7,max:.7,size:2.6,col:'#8fd0ff',kind:'c'})}}}
+  hudT-=dt;if(hudT<=0){hudT=1;updateHudFood()}
   // kazma
   P.swingCd-=dt;
   if(P.target){const r=P.target;if(r.alive===false){P.target=null}else{const d=Math.hypot(r.x-P.x,r.y-P.y),rc=reachOf(r);
@@ -909,7 +973,7 @@ function update(dt){
       if(r.kind==='cat'){petCat();P.target=null}
       else if(P.swingCd<=0&&P.swingT>=1){P.act=r.kind==='forage'?'gather':'mine';P.swingT=0;P.hitPending=true;P.swingCd=r.kind==='forage'?.15:stat.swing()}}
     else if(!P.path&&!P.moving)setTarget(r,false)}}
-  if(P.swingT<1){P.swingT=Math.min(1,P.swingT+dt/(P.act==='gather'?.26:.22));if(P.hitPending&&P.swingT>=.42){P.hitPending=false;if(P.target&&P.target.alive!==false)doHit(P.target)}}
+  if(P.swingT<1){P.swingT=Math.min(1,P.swingT+dt/(P.act==='gather'?.26:.22*Math.max(.6,stat.haste())*Math.min(1.3,stat.tired().swing)));if(P.hitPending&&P.swingT>=.42){P.hitPending=false;if(P.target&&P.target.alive!==false)doHit(P.target)}}
   // balıkçılık
   if(P.fish){const f=P.fish;f.t+=dt;const rod=RODS[G.rod];
     if(f.state==='cast'&&f.t>=.28){f.state='wait';f.t=0;f.biteAt=rnd(...rod.bite);Snd.plop();const s=iso(f.bx,f.by);parts.push({x:s.x,y:s.y,vx:0,vy:0,g:0,life:.6,max:.6,size:10,col:'#fff',kind:'ring'});puff(s.x,s.y,5,'rgba(255,255,255,.9)',{smin:15,smax:40,up:40,sz:.7})}
@@ -956,7 +1020,7 @@ function update(dt){
   if(Math.random()<dt*6){const s=iso(CAMP.x,CAMP.y);smoke.push({x:s.x+rnd(-3,3),y:s.y-22,r:rnd(3,5),life:2.4,max:2.4,vx:rnd(4,10)})}
   for(let i=smoke.length-1;i>=0;i--){const s=smoke[i];s.life-=dt;s.y-=16*dt;s.x+=s.vx*dt;s.r+=dt*4;if(s.life<=0)smoke.splice(i,1)}
   // traktör egzozu
-  if(G.vehicle===3&&P.moving&&Math.random()<dt*10){const s=iso(P.x,P.y);smoke.push({x:s.x-P.face*20,y:s.y-30,r:2,life:1,max:1,vx:-P.face*8})}
+  if(G.vehicle>=3&&P.moving&&Math.random()<dt*10){const s=iso(P.x,P.y);smoke.push({x:s.x-P.face*20,y:s.y-30,r:2,life:1,max:1,vx:-P.face*8})}
   // kelebekler
   for(const b of butterflies){b.a+=rnd(-1.5,1.5)*dt;b.x+=Math.cos(b.a)*22*dt;b.y+=Math.sin(b.a)*12*dt;const w=unIso(b.x,b.y);if(w.x<2||w.y<2||w.x>MW-2||w.y>MH-2)b.a+=Math.PI*dt*3}
   // kamera
@@ -970,7 +1034,7 @@ function update(dt){
   // pazar ipucu
   const near=dSell<2.4&&bagCount()>0;const sp2=$('sellPrompt');
   if(near&&!panelOpen){const m=iso(MARKET.x,MARKET.y);sp2.style.display='flex';sp2.style.left=((m.x-camX)*ZOOM+CW/2)+'px';sp2.style.top=((m.y-96-camY)*ZOOM+CH/2)+'px'}else sp2.style.display='none';
-  $('fav').querySelector('i')&&($('fav').querySelector('i').textContent=Math.ceil(favT)+' sn');
+  {const ft=Math.ceil(favT)+' sn';if($('favTime').textContent!==ft){$('favTime').textContent=ft;$('favBar').style.width=(favT/150*100)+'%'}}
 }
 
 // ---------- çizim ----------
@@ -997,7 +1061,7 @@ function drawRock(r,t){
   if(NODES[r.type].prof!=='lokman')shadow(ctx,s.x,s.y+2,22*r.grow,8*r.grow);
   ctx.save();ctx.translate(s.x,s.y);ctx.scale(sx,sy);F=r.flash*.85;drawRockShape(ctx,r.type,r.rr,t);F=0;ctx.restore();
   if(P.target===r&&r.alive){ctx.strokeStyle='rgba(255,255,255,.8)';ctx.lineWidth=2;ctx.setLineDash([4,4]);ctx.lineDashOffset=-t*20;ctx.beginPath();ctx.ellipse(s.x,s.y+2,26,11,0,0,6.28);ctx.stroke();ctx.setLineDash([])}
-  if(r.alive&&r.dmg>0){const f=1-r.dmg/stat.hits(NODES[r.type]);ctx.fillStyle='rgba(90,60,40,.35)';rr2(ctx,s.x-16,s.y+10,32,5,2.5);ctx.fill();ctx.fillStyle='#ffe28a';rr2(ctx,s.x-16,s.y+10,32*f,5,2.5);ctx.fill()}
+  if(r.alive&&r.dmg>0){const f=1-r.dmg/(r.need||stat.hits(NODES[r.type]));ctx.fillStyle='rgba(90,60,40,.35)';rr2(ctx,s.x-16,s.y+10,32,5,2.5);ctx.fill();ctx.fillStyle='#ffe28a';rr2(ctx,s.x-16,s.y+10,32*f,5,2.5);ctx.fill()}
 }
 function rr2(c,x,y,w,h,r){c.beginPath();c.roundRect?c.roundRect(x,y,Math.max(w,.1),h,r):c.rect(x,y,w,h)}
 
@@ -1125,7 +1189,7 @@ function drawVehicleFront(x,y,f,t){const v=G.vehicle;if(!v)return;ctx.save();ctx
     const sp=P.walkT*2;circ(ctx,30,-3,5,'#5a5a62');ctx.strokeStyle='#ccc';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(30+Math.cos(sp)*4,-3+Math.sin(sp)*4);ctx.lineTo(30-Math.cos(sp)*4,-3-Math.sin(sp)*4);ctx.stroke();
     const n=Math.min(6,bagCount());for(let i=0;i<n;i++){const ks=Object.keys(G.bag).filter(k=>G.bag[k]>0);drawGem(ctx,ks[i%ks.length]||'bakir',18+i*3,-17,.55,t)}}
   else if(v===2){poly(ctx,[-18,-24,18,-24,15,-4,-15,-4],'#9aa3ad');poly(ctx,[-18,-24,18,-24,17,-20,-17,-20],'#b9c1ca');ctx.fillStyle='#6b7480';ctx.fillRect(-15,-14,30,2);ell(ctx,-10,0,5,5,'#3c3c44');ell(ctx,10,0,5,5,'#3c3c44');circ(ctx,-10,0,1.6,'#ccc');circ(ctx,10,0,1.6,'#ccc')}
-  else if(v===3){// traktör
+  else if(v>=3){// traktör
     poly(ctx,[-22,-22,8,-22,10,-6,-22,-6],'#e04f4f');poly(ctx,[8,-18,24,-18,26,-6,10,-6],'#e86a5a');poly(ctx,[-22,-22,8,-22,8,-19,-22,-19],'#f08080');
     ctx.fillStyle='#4a4a52';ctx.fillRect(18,-26,3,8);
     const sp=P.walkT*1.5;circ(ctx,-14,-6,11,'#3c3c44');circ(ctx,-14,-6,5,'#f5c542');circ(ctx,19,-2,6,'#3c3c44');circ(ctx,19,-2,2.5,'#f5c542');
@@ -1194,8 +1258,8 @@ function drawBackpack(fill,t){const id=(G.wear&&G.wear.canta)||'bez';const c=wco
   const flapO=fill>.85?-3:0;poly(ctx,[cx-w/2-.5,cy-h/2+flapO,cx+w/2+.5,cy-h/2+flapO,cx+w/2,cy-h/2+5+flapO*.3,cx-w/2,cy-h/2+5+flapO*.3],tint(c,-12));
   circ(ctx,cx,cy-h/2+5,1.1,'#e9b949');ctx.fillStyle=tint(c,-18);rr2(ctx,cx-w/2+1.5,cy+1,w-3,5,2);ctx.fill()}
 function drawPlayer(t){const s=iso(P.x,P.y);const x=s.x,y=s.y;const f=P.face;ensureWardrobe();const W=G.wear||defaultWear(G.hero);
-  const ride=G.vehicle===3;const lift=ride?14:0;
-  const crouch=P.act==='gather'&&P.swingT<1?Math.sin(P.swingT*Math.PI)*7:0;
+  const ride=G.vehicle>=3;const lift=ride?14:0;
+  const crouch=(P.act==='gather'&&P.swingT<1?Math.sin(P.swingT*Math.PI)*7:0)+(P.tiredLv===2?2.2:P.tiredLv===1?.8:0);
   const bob=!ride&&P.spdR>.05?Math.abs(Math.sin(P.walkT))*1.8*P.spdR+Math.sin(t*2.2)*.6*(1-P.spdR):Math.sin(t*2.2)*.6;
   const fem=G.hero==='f',skin='#f2c39b';
   {const sh=1-clamp((P.jz||0)/70,0,.45);shadow(ctx,x,y+2,(ride?30:16)*sh,(ride?10:7)*sh,.22*sh)}
@@ -1318,8 +1382,8 @@ function drawTailor(t){const s=iso(TAILOR.x,TAILOR.y),x=s.x,y=s.y;shadow(ctx,x,y
   ctx.strokeStyle='#f2c14e';ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(tx-5,ty-28+vb);ctx.quadraticCurveTo(tx,ty-22+vb,tx+5,ty-28+vb);ctx.moveTo(tx-5,ty-28+vb);ctx.lineTo(tx-5,ty-18+vb);ctx.moveTo(tx+5,ty-28+vb);ctx.lineTo(tx+5,ty-20+vb);ctx.stroke()}
 
 // ---------- diğer dükkânlar ----------
-const SHOPS={pazar:{title:'Köy Pazarı',tabs:[['sell','Satış'],['square','Meydan']]},demirci:{title:'Demirci',tabs:[['picks','Kazmalar'],['upg','Tezgâh']],head:'smith'},arabaci:{title:'Arabacı',tabs:[['vehicles','Araçlar']],head:'cart'},balikci:{title:'Balıkçı',tabs:[['fishing','Oltalar']],head:'fish'}};
-const BUILDINGS=[{id:'terzi',x:8.8,y:7.5,spot:{x:8.6,y:8.8}},{id:'demirci',x:2.6,y:13.6,spot:{x:2.8,y:12.4}},{id:'arabaci',x:12.8,y:7.6,spot:{x:12.6,y:8.8}},{id:'balikci',x:5.0,y:19.7,spot:{x:5.6,y:18.6}}];
+const SHOPS={pazar:{title:'Köy Pazarı',tabs:[['sell','Satış'],['square','Meydan']]},demirci:{title:'Demirci',tabs:[['picks','Kazmalar'],['upg','Tezgâh']],head:'smith'},arabaci:{title:'Arabacı',tabs:[['vehicles','Araçlar']],head:'cart'},balikci:{title:'Balıkçı',tabs:[['fishing','Oltalar']],head:'fish'},restoran:{title:'Köy Restoranı',tabs:[['menu','Menü']],head:'food'}};
+const BUILDINGS=[{id:'terzi',x:8.8,y:7.5,spot:{x:8.6,y:8.8}},{id:'demirci',x:2.6,y:13.6,spot:{x:2.8,y:12.4}},{id:'arabaci',x:12.8,y:7.6,spot:{x:12.6,y:8.8}},{id:'balikci',x:5.0,y:19.7,spot:{x:5.6,y:18.6}},{id:'restoran',x:RESTO.x,y:RESTO.y,spot:RESTO.spot}];
 function npc(tx,ty,t,shirt,hair,extra){const vb=Math.sin(t*2+tx)*.6;shadow(ctx,tx,ty+1,8,3);ctx.fillStyle='#3d4a63';rr2(ctx,tx-5,ty-13+vb,4.5,12,2);ctx.fill();rr2(ctx,tx+.5,ty-13+vb,4.5,12,2);ctx.fill();ctx.fillStyle=shirt;rr2(ctx,tx-6.5,ty-28+vb,13,16,5);ctx.fill();circ(ctx,tx,ty-35+vb,7,'#f0c29a');ctx.fillStyle=hair;ctx.beginPath();ctx.ellipse(tx,ty-37+vb,7.4,5,0,Math.PI,0);ctx.fill();ell(ctx,tx-6,ty-34+vb,2.2,3.6,hair);circ(ctx,tx+3,ty-35+vb,.9,'#2a1d16');ctx.strokeStyle='#5a3426';ctx.lineWidth=.8;ctx.beginPath();ctx.arc(tx+3,ty-32+vb,1.4,.3,2.6);ctx.stroke();if(extra)extra(tx,ty+vb)}
 function drawSmith(t){const s=iso(2.6,13.6),x=s.x,y=s.y;shadow(ctx,x,y+4,50,14);
   ctx.fillStyle='#9a948a';ctx.fillRect(x-38,y-50,76,50);ctx.fillStyle='#857f76';ctx.fillRect(x+8,y-50,30,50);ctx.strokeStyle='rgba(60,50,40,.3)';ctx.lineWidth=1;for(let r=0;r<5;r++)for(let c=0;c<6;c++){ctx.strokeRect(x-38+c*13+(r%2)*6,y-50+r*10,13,10)}
@@ -1344,7 +1408,32 @@ function drawFishShop(t){const s=iso(5.0,19.7),x=s.x,y=s.y;shadow(ctx,x,y+4,40,1
   ctx.save();ctx.translate(x+20,y-46);ctx.rotate(Math.sin(t*1.5)*.08);drawFishIcon(ctx,'sazan');ctx.restore();
   ell(ctx,x+36,y+2,6,2.4,'#6b4a32');ctx.fillStyle='#8a5a3b';ctx.fillRect(x+30,y-12,12,14);ctx.strokeStyle='#5a3d28';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x+30,y-6);ctx.lineTo(x+42,y-6);ctx.stroke();
   npc(x-30,y+12,t,'#e9b949','#2e2420',(tx,ty)=>{ell(ctx,tx,ty-40,9,2.6,'#4d79b8');ctx.fillStyle='#4d79b8';ctx.beginPath();ctx.ellipse(tx,ty-41,6,4,0,Math.PI,0);ctx.fill()})}
-const BDRAW={terzi:drawTailor,demirci:drawSmith,arabaci:drawCartShop,balikci:drawFishShop};
+function drawRestaurant(t){const s=iso(RESTO.x,RESTO.y),x=s.x,y=s.y;shadow(ctx,x,y+4,56,15);
+  // dış masa ve şemsiye
+  {const tx=x-58,ty=y-12;shadow(ctx,tx,ty+2,18,5);ctx.fillStyle='#8a5a3b';ctx.fillRect(tx-1,ty-14,2,14);ell(ctx,tx,ty-14,13,4.6,'#fbf6ea');ctx.save();ctx.beginPath();ctx.ellipse(tx,ty-14,13,4.6,0,0,6.28);ctx.clip();ctx.fillStyle='#e65c5c';for(let i=-3;i<3;i++)for(let j=-1;j<1;j++)if((i+j)&1)ctx.fillRect(tx+i*4.4,ty-18.6+j*4.6+4.6,4.4,2.3);ctx.restore();
+    ctx.fillStyle='#7a4e33';ctx.fillRect(tx-.8,ty-44,1.6,30);poly(ctx,[tx-20,ty-38,tx,ty-50,tx+20,ty-38],'#e65c5c');for(let i=0;i<4;i++)poly(ctx,[tx-20+i*10,ty-38,tx-10+i*10,ty-38,tx,ty-50],i%2?'#e65c5c':'#fbf6ea');
+    ell(ctx,tx-6,ty-16,3,2,'#fff');ctx.fillStyle='#f6ecd8';ctx.fillRect(tx+3,ty-20,3,5);
+    [[-16,4],[14,4]].forEach(([dx,dy])=>{ell(ctx,tx+dx,ty-7+dy,5,2,'#c48e5a');ctx.fillStyle='#8a5a3b';ctx.fillRect(tx+dx-.8,ty-7+dy,1.6,7)})}
+  // duvarlar
+  ctx.fillStyle='#f7ecd6';ctx.fillRect(x-42,y-54,84,54);ctx.fillStyle='#ead9bb';ctx.fillRect(x+12,y-54,30,54);
+  ctx.fillStyle='#8a5a3b';[[-42,3],[-15,3],[12,3],[39,3]].forEach(([dx,w])=>ctx.fillRect(x+dx,y-54,w,54));ctx.fillRect(x-42,y-30,84,3);
+  // çatı + baca
+  ctx.fillStyle='#b5543a';ctx.fillRect(x+18,y-94,11,22);ctx.fillStyle='#8a3f2c';ctx.fillRect(x+16,y-96,15,4);
+  for(let i=0;i<3;i++){const k=(t*.35+i*.33)%1;ctx.globalAlpha=.45*(1-k);circ(ctx,x+24+Math.sin(k*5+i)*4+k*8,y-100-k*34,4+k*7,'#f4efe6');ctx.globalAlpha=1}
+  poly(ctx,[x-52,y-52,x+52,y-52,x+42,y-78,x-42,y-78],'#c9653f');poly(ctx,[x-42,y-78,x+42,y-78,x+36,y-84,x-36,y-84],'#a84e2f');
+  ctx.strokeStyle='rgba(120,50,30,.35)';ctx.lineWidth=1.2;for(let r=1;r<4;r++){const yy=y-52-r*6.5;ctx.beginPath();ctx.moveTo(x-52+r*2.5,yy);ctx.lineTo(x+52-r*2.5,yy);ctx.stroke()}
+  // tente
+  for(let i=0;i<8;i++){ctx.fillStyle=i%2?'#fbf6ea':'#4f8a3a';ctx.beginPath();ctx.moveTo(x-44+i*11,y-52);ctx.lineTo(x-33+i*11,y-52);ctx.lineTo(x-33+i*11,y-45);ctx.quadraticCurveTo(x-38.5+i*11,y-40,x-44+i*11,y-45);ctx.fill()}
+  // kapı ve pencereler
+  ctx.fillStyle='#7a4e33';ctx.beginPath();ctx.moveTo(x-8,y);ctx.lineTo(x-8,y-22);ctx.quadraticCurveTo(x,y-31,x+8,y-22);ctx.lineTo(x+8,y);ctx.fill();circ(ctx,x+5,y-11,1.2,'#e9b949');
+  const glow=.75+.12*Math.sin(t*2.3);for(const wx of[-34,20]){ctx.fillStyle=`rgba(255,224,150,${glow})`;rr2(ctx,x+wx,y-25,16,15,3);ctx.fill();ctx.strokeStyle='#7a4e33';ctx.lineWidth=2;ctx.strokeRect(x+wx,y-25,16,15);ctx.beginPath();ctx.moveTo(x+wx+8,y-25);ctx.lineTo(x+wx+8,y-10);ctx.stroke();ell(ctx,x+wx+8,y-8,10,2.6,'#6fae55');circ(ctx,x+wx+3,y-10,2,'#ff7a8a');circ(ctx,x+wx+12,y-10,2,'#fff3a6')}
+  // tabela
+  ctx.fillStyle='#fff7ea';rr2(ctx,x-38,y-74,76,15,5);ctx.fill();ctx.strokeStyle='#8a3a2a';ctx.lineWidth=2;ctx.stroke();ctx.fillStyle='#8a3a2a';ctx.font='900 10px ui-rounded,system-ui,sans-serif';ctx.textAlign='center';ctx.fillText('RESTORAN',x+6,y-63);
+  ctx.strokeStyle='#8a3a2a';ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(x-30,y-71);ctx.lineTo(x-30,y-62);ctx.moveTo(x-32,y-71);ctx.lineTo(x-32,y-67);ctx.moveTo(x-28,y-71);ctx.lineTo(x-28,y-67);ctx.stroke();
+  // aşçı
+  npc(x+38,y+12,t,'#ffffff','#3b2a20',(tx,ty)=>{ctx.fillStyle='#ffffff';ctx.fillRect(tx-5,ty-46,10,7);circ(ctx,tx-3,ty-47,3.6,'#fff');circ(ctx,tx+3,ty-47,3.6,'#fff');circ(ctx,tx,ty-49,4,'#fff');ctx.strokeStyle='#d8d2ca';ctx.lineWidth=.8;ctx.strokeRect(tx-5,ty-42,10,1);
+    ctx.fillStyle='#e65c5c';ctx.fillRect(tx-6.5,ty-22,13,2);ell(ctx,tx+9,ty-24,7,2,'#c9c2b9');const st=(t*.8)%1;ctx.globalAlpha=.5*(1-st);circ(ctx,tx+9,ty-28-st*10,2+st*2,'#fff');ctx.globalAlpha=1;ell(ctx,tx+9,ty-26,4,2.4,'#d9883a')})}
+const BDRAW={terzi:drawTailor,demirci:drawSmith,arabaci:drawCartShop,balikci:drawFishShop,restoran:drawRestaurant};
 function buildingAtScreen(wx,wy){for(const b of BUILDINGS){const s=iso(b.x,b.y);if(Math.abs(wx-s.x)<46&&wy>s.y-92&&wy<s.y+14)return b}return null}
 function goShop(b){P.target=null;stopFishing();P.sellTarget=false;P.goShop=b.id;const sp=b.spot;P.path=findPath(Math.floor(P.x),Math.floor(P.y),Math.floor(sp.x),Math.floor(sp.y))||[];P.path.push({x:sp.x,y:sp.y})}
 function openShop(id,t){if(id==='terzi'){openTailor(true);return}curShop=id;tab=t||SHOPS[id].tabs[0][0];openPanel('shop',tab)}
@@ -1527,7 +1616,7 @@ function render(){
   for(const tr of trees){const s=iso(tr.x,tr.y);if(s.x<vx0||s.x>vx1||s.y<vy0||s.y>vy1+60)continue;L.push([tr.x+tr.y,()=>drawTree(tr,t)])}
   for(const g of gems)L.push([g.x+g.y+(g.st==='f'?5:0),()=>drawGemWorld(g,t)]);
   L.push([P.x+P.y+.01,()=>drawPlayer(t)]);
-  if(G.vehicle===1||G.vehicle===2)L.push([CART.x+CART.y,()=>drawCart(t)]);
+  if(G.vehicle===1||G.vehicle===2||G.vehicle===4)L.push([CART.x+CART.y,()=>drawCart(t)]);
   for(const f of forage){const s=iso(f.x,f.y);if(s.x<vx0||s.x>vx1||s.y<vy0||s.y>vy1)continue;if(!f.alive&&f.type!=='berry')continue;L.push([f.x+f.y-.05,()=>drawForage(f,t)])}
   for(const a of animals){const s=iso(a.x,a.y);if(s.x<vx0||s.x>vx1||s.y<vy0-200||s.y>vy1)continue;L.push([a.x+a.y+(a.kind==='duck'?-.3:0)+(a.kind==='bird'&&a.fly>0?50:0),()=>drawAnimal(a,t)])}
   L.push([MARKET.x+MARKET.y+.6,()=>drawMarket(t)]);pushMarketObjects(L,t);
@@ -1537,7 +1626,7 @@ function render(){
   for(const f of sunflowers)if(inV(f.x,f.y,30))L.push([f.x+f.y,()=>drawSunflowers(f,t)]);
   if(inV(LM.mill.x,LM.mill.y))L.push([LM.mill.x+LM.mill.y+.4,()=>drawWindmill(t)]);
   if(inV(LM.ulu.x,LM.ulu.y,220))L.push([LM.ulu.x+LM.ulu.y+.6,()=>drawUlu(t)]);
-  if(inV(LM.mine.x,LM.mine.y))L.push([LM.mine.x+LM.mine.y+.3,()=>drawMine(t)]),L.push([LM.mine.x+LM.mine.y+2.7,drawWagon]);L.push([CAMP.x+CAMP.y,()=>drawCamp(t)]);L.push([TENT.x+TENT.y+.5,drawTent]);L.push([BENCH.x+BENCH.y,drawBench]);
+  L.push([CAMP.x+CAMP.y,()=>drawCamp(t)]);L.push([TENT.x+TENT.y+.5,drawTent]);L.push([BENCH.x+BENCH.y,drawBench]);
   L.sort((a,b)=>a[0]-b[0]);for(const o of L)o[1]();
   // duman
   for(const s of smoke){ctx.globalAlpha=(s.life/s.max)*.35;ell(ctx,s.x,s.y,s.r,s.r,'#ffffff');ctx.globalAlpha=1}
@@ -1571,9 +1660,11 @@ function star(c,x,y,r,col,rot){c.save();c.translate(x,y);c.rotate(rot);c.fillSty
 
 // ---------- HUD ----------
 function gemIcon(type,size=18){const c=document.createElement('canvas');c.width=size*2;c.height=size*2;c.style.width=size+'px';c.style.height=size+'px';const x=c.getContext('2d');x.scale(2*size/18,2*size/18);drawGem(x,type,9,16,1);return c}
-function updateHud(){$('gold').textContent=Math.floor(G.gold).toLocaleString('tr-TR');const bc=bagCount(),cap=stat.cap();$('bagTxt').textContent=bc+'/'+cap;$('bagBar').style.width=(bc/cap*100)+'%';$('bagBarWrap').classList.toggle('full',bc>=cap);
+function updateHudFood(){const lv=stat.tired().lv;$('foodBar').style.width=G.tok+'%';$('foodBarWrap').className='bar'+(lv===2?' starve':lv===1?' full':'');$('foodLbl').textContent=lv===2?'Yorgun':lv===1?'Aç':'Tok'}
+function updateHud(){updateHudFood();$('gold').textContent=Math.floor(G.gold).toLocaleString('tr-TR');const bc=bagCount(),cap=stat.cap();$('bagTxt').textContent=bc+'/'+cap;$('bagBar').style.width=(bc/cap*100)+'%';$('bagBarWrap').classList.toggle('full',bc>=cap);
   const bi=$('bagIcons');bi.innerHTML='';Object.keys(G.bag).filter(k=>G.bag[k]>0&&ITEMS[k]).slice(0,7).forEach(k=>{{const s=document.createElement('span');s.appendChild(gemIcon(k,16));s.append(G.bag[k]);bi.appendChild(s)}});
-  const fv=$('fav');fv.innerHTML='';fv.append('Günün Gözdesi: ');fv.appendChild(gemIcon(fav,16));const b=document.createElement('b');b.textContent=ITEMS[fav].name+' +%50';fv.appendChild(b);const i=document.createElement('i');i.style.cssText='font-style:normal;opacity:.6;font-size:12px';i.textContent=Math.ceil(favT)+' sn';fv.appendChild(i)}
+  const fi=$('favItem');if(fi.dataset.k!==fav){fi.dataset.k=fav;fi.innerHTML='';fi.appendChild(gemIcon(fav,20));const b=document.createElement('b');b.textContent=ITEMS[fav].name;fi.appendChild(b);const bn=document.createElement('span');bn.className='bn';bn.textContent='+%50';fi.appendChild(bn);const fp=$('favPill');fp.classList.remove('pop');void fp.offsetWidth;fp.classList.add('pop')}
+  const have=G.bag[fav]||0;$('favSub').textContent=have?`Çantanda ${have} tane · ${have*priceOf(fav)} altın eder`:(G.found[fav]!==undefined?'Çantanda yok':'Henüz bulmadın');$('favTime').textContent=Math.ceil(favT)+' sn';$('favBar').style.width=(favT/150*100)+'%'}
 
 // ---------- satış ----------
 function priceOf(k){return Math.round(ITEMS[k].price*stat.sell()*(k===fav?1.5:1))}
@@ -1591,11 +1682,11 @@ $('sellPrompt').addEventListener('click',e=>{Snd.init();sellAll(e.currentTarget)
 let panelOpen=null,tab='sell';
 function openPanel(kind,t){panelOpen=kind;if(t)tab=t;else if(kind==='shop'&&!SHOPS[curShop].tabs.some(x=>x[0]===tab))tab=SHOPS[curShop].tabs[0][0];$('panelWrap').style.display='flex';renderPanel()}
 function closePanel(){panelOpen=null;PV=null;$('panelWrap').style.display='none'}
-function resetGame(){resetting=true;try{localStorage.removeItem(SAVE_KEY)}catch(e){}Snd.buy();const ov=document.createElement('div');ov.id='resetOv';ov.innerHTML='<div>Yeni bir gün başlıyor…</div>';document.body.appendChild(ov);setTimeout(()=>{try{location.reload()}catch(e){}},900)}
+function resetGame(){resetting=true;try{localStorage.removeItem(SAVE_KEY);localStorage.removeItem(LEGACY_KEY)}catch(e){}Snd.buy();const ov=document.createElement('div');ov.id='resetOv';ov.innerHTML='<div>Yeni bir gün başlıyor…</div>';document.body.appendChild(ov);setTimeout(()=>{try{location.reload()}catch(e){}},900)}
 function togglePanel(k){if(panelOpen===k)closePanel();else openPanel(k)}
 $('closeBtn').onclick=closePanel;$('panelWrap').addEventListener('pointerdown',e=>{if(e.target.id==='panelWrap')closePanel()});
 $('bSet').onclick=()=>{Snd.init();togglePanel('settings')};
-$('bShop').onclick=()=>{Snd.init();if(panelOpen==='shop')closePanel();else openShop('pazar')};
+$('favPill').onclick=()=>$('bShop').click();$('bShop').onclick=()=>{Snd.init();if(panelOpen==='shop')closePanel();else openShop('pazar')};
 $('bWard').onclick=()=>{Snd.init();if(panelOpen==='tailor')closePanel();else openTailor(false)};$('bBook').onclick=()=>{Snd.init();togglePanel('book')};
 function toggleMute(){Snd.muted=!Snd.muted;SET.muted=Snd.muted;saveSet();$('bMute').style.opacity=Snd.muted?.5:1;$('muteIco').innerHTML=Snd.muted?'<path d="M4 9h4l5-4v14l-5-4H4z" fill="#ddd" stroke="#7a4e33" stroke-width="1.8"/><path d="M16 9l5 6M21 9l-5 6" stroke="#7a4e33" stroke-width="1.8" stroke-linecap="round"/>':'<path d="M4 9h4l5-4v14l-5-4H4z" fill="#f5c542" stroke="#7a4e33" stroke-width="1.8"/><path d="M16 8c2 2 2 6 0 8M18.5 5.5c3.5 3.5 3.5 9.5 0 13" fill="none" stroke="#7a4e33" stroke-width="1.8" stroke-linecap="round"/>'}
 $('bMute').onclick=()=>{Snd.init();toggleMute()};
@@ -1607,6 +1698,15 @@ const ICON={
   overalls:c=>{poly(c,[14,18,38,18,40,46,30,46,26,34,22,46,12,46],'#4d79b8');c.fillStyle='#4d79b8';c.fillRect(15,8,4,12);c.fillRect(33,8,4,12);circ(c,17,20,2,'#f5c542');circ(c,35,20,2,'#f5c542')},
   vest:c=>{poly(c,[12,10,24,10,24,44,10,44],'#c8763a');poly(c,[28,10,40,10,42,44,28,44],'#c8763a');c.fillStyle='#f5c542';c.fillRect(31,30,6,4)},
   cape:c=>{poly(c,[18,8,34,8,42,46,10,46],'#7b3fa0');c.strokeStyle='#f5c542';c.lineWidth=2.5;c.beginPath();c.moveTo(10,46);c.lineTo(42,46);c.moveTo(18,8);c.lineTo(34,8);c.stroke();star(c,26,26,4,'#f5c542',0)},
+  food:(id)=>c=>{const plate=(r=19)=>{ell(c,26,34,r,r*.42,'#e9e4da');ell(c,26,33,r-2,r*.42-1.6,'#ffffff')};
+    if(id==='ayran'){poly(c,[17,12,35,12,32,46,20,46],'#f4f8fb');ell(c,26,12,9,2.6,'#ffffff');ell(c,26,15,8,2.4,'#fdfdf8');c.strokeStyle='#b9c6d0';c.lineWidth=1.5;c.beginPath();c.moveTo(17,12);c.lineTo(20,46);c.lineTo(32,46);c.lineTo(35,12);c.stroke();ell(c,26,46,6,1.6,'#d8e2ea')}
+    else if(id==='corba'){ell(c,26,32,19,8,'#8a5a3b');ell(c,26,28,18,7,'#c48e5a');ell(c,26,28,15.5,5.6,'#f29a3a');circ(c,20,27,1.2,'#c75b3a');circ(c,30,29,1.1,'#c75b3a');ell(c,36,22,5,3,'#fff3a6');ell(c,36,22,3.6,2,'#f5e06a');c.strokeStyle='rgba(255,255,255,.7)';c.lineWidth=1.4;for(const sx of[20,28]){c.beginPath();c.moveTo(sx,20);c.quadraticCurveTo(sx-3,15,sx,11);c.stroke()}}
+    else if(id==='gozleme'){plate();c.fillStyle='#e9c48a';c.beginPath();c.arc(26,34,14,Math.PI,0);c.closePath();c.fill();c.strokeStyle='#b5843f';c.lineWidth=1.4;c.stroke();c.strokeStyle='#a86a2a';for(let i=0;i<3;i++){c.beginPath();c.moveTo(17+i*7,30);c.lineTo(20+i*7,25);c.stroke()}ell(c,26,34,13,1.6,'#fff7e0')}
+    else if(id==='manti'){plate();for(let i=0;i<9;i++){const a=i*.7,r=i?8:0;ell(c,26+Math.cos(a)*r*1.4,32+Math.sin(a)*r*.5,3.4,2.4,'#f3e2be')}ell(c,26,32,12,4.4,'rgba(255,255,255,.55)');c.strokeStyle='#d0442a';c.lineWidth=1.6;c.beginPath();c.moveTo(16,31);c.quadraticCurveTo(26,26,36,32);c.stroke();circ(c,24,30,1,'#6fae55');circ(c,30,33,1,'#6fae55')}
+    else if(id==='karniyarik'){plate();ell(c,26,32,14,6,'#5a2f5a');ell(c,26,31,11,4,'#7a3f7a');ell(c,26,29,9,3,'#c0452e');for(let i=0;i<4;i++)circ(c,20+i*4,28.5,1,'#e8865a');ell(c,26,27,2,1.4,'#6fae55');poly(c,[38,30,42,30,40,22],'#4f8a3a')}
+    else if(id==='iskender'){plate(20);ell(c,26,34,15,5,'#e9c48a');for(let i=0;i<5;i++)ell(c,18+i*4,31-(i%2),4.4,2,'#8a4a2a');c.strokeStyle='#d0442a';c.lineWidth=2.2;c.beginPath();c.moveTo(15,30);c.quadraticCurveTo(26,25,36,30);c.stroke();ell(c,38,36,5,2.6,'#ffffff');poly(c,[12,36,15,32,17,37],'#e65c5c');circ(c,33,29,1.4,'#f5d06a')}
+    else if(id==='kunefe'){ell(c,26,35,18,7,'#b06a3a');ell(c,26,32,17,6.4,'#d98a3a');ell(c,26,31,15,5.4,'#f2a93a');c.strokeStyle='rgba(255,230,150,.8)';c.lineWidth=.8;for(let i=0;i<6;i++){c.beginPath();c.moveTo(14+i*4,30);c.lineTo(17+i*4,33);c.stroke()}for(let i=0;i<6;i++)circ(c,20+i*2.6,30+(i%2),1.2,'#6fae55')}
+    else if(id==='kahve'){ell(c,26,38,15,5,'#e9e4da');ell(c,26,37,13,4,'#ffffff');poly(c,[18,20,34,20,32,36,20,36],'#ffffff');c.strokeStyle='#c75b4a';c.lineWidth=1.6;c.beginPath();c.moveTo(18.5,24);c.lineTo(33.5,24);c.stroke();ell(c,26,20,8,2.4,'#5a3424');ell(c,26,20,6,1.6,'#a07050');c.strokeStyle='#d8d2ca';c.lineWidth=2;c.beginPath();c.arc(35,28,3.6,-1.4,1.4);c.stroke();circ(c,40,38,2.4,'#f2e6cf')}},
   veh:(v)=>c=>{c.translate(26,40);const sv=G.vehicle;G.vehicle=v;const sb=P.walkT;P.walkT=0;c.save();c.scale(.85,.85);
     if(v===1){c.translate(-26,0)}drawVehicleFrontIcon(c,v);c.restore();G.vehicle=sv;P.walkT=sb},
   magnet:c=>{c.lineCap='butt';c.strokeStyle='#e65c5c';c.lineWidth=9;c.beginPath();c.arc(26,22,12,Math.PI,0);c.stroke();c.fillStyle='#d8dde3';c.fillRect(9.5,22,9,12);c.fillRect(33.5,22,9,12);c.fillStyle='#e65c5c';c.fillRect(9.5,22,9,6);c.fillRect(33.5,22,9,6)},
@@ -1617,6 +1717,7 @@ function drawVehicleFrontIcon(c,v){const old=ctx;// drawVehicleFront global ctx 
   const swap=c;window.__c=swap;
   if(v===1){c.strokeStyle='#7a4e33';c.lineWidth=2.5;c.beginPath();c.moveTo(4,-14);c.lineTo(16,-10);c.stroke();poly(c,[14,-18,36,-18,32,-6,18,-6],'#c48e5a');poly(c,[14,-18,36,-18,35,-15,15,-15],'#a8754f');circ(c,30,-3,5,'#5a5a62')}
   else if(v===2){poly(c,[-18,-24,18,-24,15,-4,-15,-4],'#9aa3ad');poly(c,[-18,-24,18,-24,17,-20,-17,-20],'#b9c1ca');ell(c,-10,0,5,5,'#3c3c44');ell(c,10,0,5,5,'#3c3c44')}
+  else if(v===4){c.save();c.scale(.62,.62);c.translate(16,4);drawTrailerShape(c,-50,0,1,0,0);drawVehicleFrontIcon(c,3);c.restore()}
   else if(v===3){poly(c,[-22,-22,8,-22,10,-6,-22,-6],'#e04f4f');poly(c,[8,-18,24,-18,26,-6,10,-6],'#e86a5a');c.fillStyle='#4a4a52';c.fillRect(18,-26,3,8);circ(c,-14,-6,11,'#3c3c44');circ(c,-14,-6,5,'#f5c542');circ(c,19,-2,6,'#3c3c44');circ(c,19,-2,2.5,'#f5c542')}}
 function relicIcon(id){return c=>{
   if(id==='malachite'){circ(c,26,28,16,'#3f9a6a');c.strokeStyle='#7fd6a2';c.lineWidth=2.5;for(let i=0;i<3;i++){c.beginPath();c.arc(26,28,5+i*4,3.6,6);c.stroke()}}
@@ -1633,6 +1734,9 @@ function relicIcon(id){return c=>{
 function mkItem(icon,name,desc,btnTxt,onClick,state){const d=document.createElement('div');d.className='item';d.appendChild(iconCanvas(icon));const tx=document.createElement('div');tx.className='tx';tx.innerHTML=`<div class="nm"></div><div class="ds"></div>`;tx.children[0].textContent=name;tx.children[1].textContent=desc;d.appendChild(tx);
   if(state==='owned'){const s=document.createElement('span');s.className='tag';s.textContent=btnTxt;d.appendChild(s)}else{const b=document.createElement('button');b.className='btn'+(state==='buy'?' gold':'');b.innerHTML=btnTxt;if(state!=='buy')b.disabled=true;b.onclick=()=>{Snd.init();onClick(b)};d.appendChild(b)}return d}
 const coinSvg='<svg width="16" height="16" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#f5c542" stroke="#a8701f" stroke-width="2.5"/></svg>';
+function eatFood(f){if(G.gold<f.cost){toast('Biraz daha altın biriktirelim.');return}G.gold-=f.cost;G.tok=Math.min(100,G.tok+f.tok);if(f.buff)P.buff[f.buff]=f.bt;
+  Snd.munch();setTimeout(()=>Snd.tone(880,.18,{vol:.06,wet:.4}),450);const s=iso(P.x,P.y);for(let i=0;i<10;i++)parts.push({x:s.x+rnd(-10,10),y:s.y-40,vx:rnd(-40,40),vy:rnd(-90,-30),g:90,life:.9,max:.9,size:4,col:['#ffb27a','#ff9ec4','#fff3a6'][i%3],kind:'star'});
+  P.tiredLv=stat.tired().lv;toast(`${f.name} · Afiyet olsun!`,!!f.buff);say(['Eline sağlık, çok güzel olmuş.','Oh, enerjim yerine geldi.','Bunu her gün yiyebilirim.'][Math.floor(Math.random()*3)],2.4);updateHud();save();renderPanel()}
 function buy(cost,fn,el){if(G.gold<cost){toast('Biraz daha altın biriktirelim.');return}G.gold-=cost;fn();Snd.buy();const s=iso(P.x,P.y);for(let i=0;i<16;i++)parts.push({x:s.x,y:s.y-30,vx:rnd(-100,100),vy:rnd(-150,-40),g:150,life:1,max:1,size:5,col:['#ffd84a','#ff9ec4','#a8d8ff'][i%3],kind:'star'});updateHud();save();renderPanel()}
 function renderPanel(){
   const body=$('panelBody'),tabs=$('tabs'),head=$('panelHead');body.innerHTML='';tabs.innerHTML='';
@@ -1655,6 +1759,9 @@ function renderPanel(){
     if(tab==='fishing'){RODS.slice(1).forEach((r,j)=>{const i=j+1;const own=G.rod>=i;body.appendChild(mkItem(ICON.rod(i),r.name,r.desc,G.rod===i?'Elinde':own?'Sahipsin':i>G.rod+1?'Önce Bambu Olta':coinSvg+' '+r.cost,()=>buy(r.cost,()=>{G.rod=i;toast(`${r.name} senin! Dereye tıklayıp oltanı at.`,true,3.5)}),own?'owned':i===G.rod+1&&g>=r.cost?'buy':'no'))});
       const tip=document.createElement('div');tip.className='ds';tip.style.cssText='font-size:13px;opacity:.8;padding:4px';tip.textContent='Nasıl oynanır: dereye tıkla, karakterin kıyıya gidip oltayı atar. Şamandıranın üstünde "!" belirince tıkla ya da Boşluk tuşuna bas. Kaçırırsan dert etme, balık yine gelir.';body.appendChild(tip)}
     if(tab==='outfits')OUTFITS.forEach(o=>{const own=G.outfit[o.id];body.appendChild(mkItem(ICON[o.id],o.name,o.desc,own?'Giyiliyor':coinSvg+' '+o.cost,()=>buy(o.cost,()=>{G.outfit[o.id]=true;toast(`${o.name} çok yakıştı!`,true)}),own?'owned':g>=o.cost?'buy':'no'))});
+    if(tab==='menu'){const tl=stat.tired();const box=document.createElement('div');box.className='sellBox';box.innerHTML=`<div class="sellRow" style="font-size:16px"><span>Tokluk</span><span>${Math.round(G.tok)}/100</span></div><div class="bar ${tl.lv===2?'starve':tl.lv===1?'full':''}"><i style="width:${G.tok}%"></i></div><div class="ds" style="font-size:13px">${tl.lv===2?'Çok yorgunsun: yavaş yürüyor, ağır vuruyorsun.':tl.lv===1?'Acıktın: biraz yavaşladın.':'Karnın tok, enerjin yerinde.'}</div>`;body.appendChild(box);
+      FOODS.forEach(f=>{const full=G.tok>=96&&!f.buff;body.appendChild(mkItem(ICON.food(f.id),f.name,f.desc,full?'Karnın tok':coinSvg+' '+f.cost,()=>eatFood(f),full?'no':g>=f.cost?'buy':'no'))});
+      const tip=document.createElement('div');tip.className='ds';tip.style.cssText='font-size:13px;opacity:.8;padding:4px';tip.textContent='Çalıştıkça acıkırsın. Tokluk 35\'in altına inince yavaşlarsın, 12\'nin altında iyice yorulursun. Yemekler hemen yenir.';body.appendChild(tip)}
     if(tab==='vehicles')VEHICLES.slice(1).forEach((v,j)=>{const i=j+1;const own=G.vehicle>=i;body.appendChild(mkItem(ICON.veh(i),v.name,v.desc,G.vehicle===i?'Kullanılıyor':own?'Sahipsin':i>G.vehicle+1?'Önce önceki araç':coinSvg+' '+v.cost,()=>buy(v.cost,()=>{G.vehicle=i;toast(`${v.name} hazır! Çanta: ${stat.cap()}`,true)}),own?'owned':i===G.vehicle+1&&g>=v.cost?'buy':'no'))});
     if(tab==='upg')['magnet','luck'].forEach(k=>{const u=UPG[k],lv=G[k],max=lv>=u.costs.length;const cost=u.costs[lv];const desc=`${u.desc} · Seviye ${lv}/${u.costs.length}`+(k==='magnet'?` · Menzil ${stat.magnet().toFixed(1)}`:` · Şans %${Math.round(stat.luck()*100)}`);
       body.appendChild(mkItem(ICON[k],u.name,desc,max?'Tamamlandı':coinSvg+' '+cost,()=>buy(cost,()=>{G[k]++;toast(`${u.name} geliştirildi!`,true)}),max?'owned':g>=cost?'buy':'no'))});
@@ -1709,6 +1816,8 @@ function loop(now){const dt=Math.min(.05,(now-last)/1000);last=now;update(dt);re
 requestAnimationFrame(loop);
 // test kancası
 window.__game={MK,villagers,marketLv,G,P,rocks,forage,animals,CAT,reelIn,startFishingAt,gems,stat,sellAll,openPanel,closePanel,onTap,iso,camera:()=>({camX,camY,ZOOM,CW,CH})};
+
+})();
 </script>
 </body>
 </html>
