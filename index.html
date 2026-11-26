@@ -704,6 +704,8 @@ function freeAt(x,y){const r=.22;if(x<r||y<r||x>MW-r||y>MH-r)return false;
   for(const[ox,oy]of[[-r,-r],[r,-r],[r,r],[-r,r]]){const tx=Math.floor(x+ox),ty=Math.floor(y+oy);if(block[ty*MW+tx])return false}
   const tx=Math.floor(x),ty=Math.floor(y);for(let j=-1;j<=1;j++)for(let i=-1;i<=1;i++){const xx=tx+i,yy=ty+j;if(xx<0||yy<0||xx>=MW||yy>=MH)continue;const rk=rockAt[yy*MW+xx];if(rk&&rk.alive&&rk.grow>.5&&Math.hypot(rk.x-x,rk.y-y)<.5)return false}
   return true}
+function lineFree(ax,ay,bx,by){const d=Math.hypot(bx-ax,by-ay),n=Math.ceil(d/.18);for(let i=1;i<=n;i++){const u=i/n;if(!freeAt(ax+(bx-ax)*u,ay+(by-ay)*u))return false}return true}
+function smoothPath(p){if(!p||p.length<2)return p;const out=[];let cx=P.x,cy=P.y,i=0;while(i<p.length){let j=p.length-1;while(j>i&&!lineFree(cx,cy,p[j].x,p[j].y))j--;out.push(p[j]);cx=p[j].x;cy=p[j].y;i=j+1}return out}
 function moveBy(dx,dy){let moved=false;if(freeAt(P.x+dx,P.y)){P.x+=dx;moved=true}if(freeAt(P.x,P.y+dy)){P.y+=dy;moved=true}return moved}
 
 // ---------- madencilik ----------
@@ -851,14 +853,23 @@ function update(dt){
   let kx=0,ky=0;
   if(keys.w||keys.arrowup){kx-=1;ky-=1}if(keys.s||keys.arrowdown){kx+=1;ky+=1}
   if(keys.a||keys.arrowleft){kx-=1;ky+=1}if(keys.d||keys.arrowright){kx+=1;ky-=1}
-  const sp=stat.speed();P.moving=false;
-  if(kx||ky){const l=Math.hypot(kx,ky);P.path=null;P.goShop=null;P.target=null;P.sellTarget=false;if(P.fish||P.pendingFish)stopFishing();const mx=kx/l*sp*dt,my=ky/l*sp*dt;if(moveBy(mx,my))P.moving=true;const sdx=(mx-my);if(Math.abs(sdx)>1e-4)P.face=sdx>0?1:-1}
-  else if(P.path&&P.path.length){const n=P.path[0];const dx=n.x-P.x,dy=n.y-P.y,d=Math.hypot(dx,dy);
-    if(d<.08){P.path.shift()}else{const st=Math.min(d,sp*dt);const mx=dx/d*st,my=dy/d*st;if(!moveBy(mx,my)){P.x+=mx;P.y+=my}P.moving=true;const sdx=mx-my;if(Math.abs(sdx)>1e-4)P.face=sdx>0?1:-1}
+  const sp=stat.speed();let dvx=0,dvy=0;
+  if(kx||ky){const l=Math.hypot(kx,ky);P.path=null;P.goShop=null;P.target=null;P.sellTarget=false;if(P.fish||P.pendingFish)stopFishing();dvx=kx/l*sp;dvy=ky/l*sp}
+  else if(P.path&&P.path.length){if(!P.path._s){P.path=smoothPath(P.path);P.path._s=1}
+    let n=P.path[0];let dx=n.x-P.x,dy=n.y-P.y,d=Math.hypot(dx,dy);const last=P.path.length===1;
+    if(!last&&d<.42){P.path.shift();n=P.path[0];dx=n.x-P.x;dy=n.y-P.y;d=Math.hypot(dx,dy)}
+    if(last&&d<.04){P.path.shift()}
+    else if(d>1e-4){const slow=last?clamp(d/.55,.28,1):1;dvx=dx/d*sp*slow;dvy=dy/d*sp*slow;if(last&&d<sp*slow*dt){P.x=n.x;P.y=n.y;P.path.shift();dvx=dvy=0}}
     if(P.target&&Math.hypot(P.target.x-P.x,P.target.y-P.y)<=reachOf(P.target))P.path=null;
     if(P.path&&!P.path.length)P.path=null}
+  {const acc=(dvx||dvy)?11:16,k=1-Math.exp(-acc*dt);P.vx=(P.vx||0)+(dvx-(P.vx||0))*k;P.vy=(P.vy||0)+(dvy-(P.vy||0))*k;
+    const spd=Math.hypot(P.vx,P.vy);if(spd<.03&&!dvx&&!dvy){P.vx=P.vy=0}
+    const ox=P.x,oy=P.y;if(spd>0){const mx=P.vx*dt,my=P.vy*dt;if(!freeAt(P.x+mx,P.y))P.vx*=.3;if(!freeAt(P.x,P.y+my))P.vy*=.3;moveBy(mx,my)}
+    const moved=Math.hypot(P.x-ox,P.y-oy);P.moving=spd>.25;P.spdR=lerp(P.spdR||0,clamp(spd/sp,0,1),1-Math.exp(-8*dt));
+    const sdx=P.vx-P.vy;if(Math.abs(sdx)>.6)P.face=sdx>0?1:-1;
+    P.lean=lerp(P.lean||0,P.moving?.05*P.spdR:0,1-Math.exp(-6*dt));
+    if(P.moving)P.walkT+=Math.min(moved,sp*dt*1.2)*2.7;else P.walkT=lerp(P.walkT,Math.round(P.walkT/Math.PI)*Math.PI,1-Math.exp(-12*dt))}
   if(P.pendingFish&&!P.path){P.pendingFish=false;beginCast()}
-  if(P.moving)P.walkT+=dt*sp*2.6;else P.walkT=0;
   if(keys[' ']&&!P.target&&!P.moving&&!P.fish){const r=nearestRock(REACH+.35);if(r)P.target=r}
   // kazma
   P.swingCd-=dt;
@@ -918,7 +929,7 @@ function update(dt){
   // kelebekler
   for(const b of butterflies){b.a+=rnd(-1.5,1.5)*dt;b.x+=Math.cos(b.a)*22*dt;b.y+=Math.sin(b.a)*12*dt;const w=unIso(b.x,b.y);if(w.x<2||w.y<2||w.x>MW-2||w.y>MH-2)b.a+=Math.PI*dt*3}
   // kamera
-  const pc=iso(P.x,P.y);const k=1-Math.pow(.001,dt);camX=lerp(camX,pc.x,k);camY=lerp(camY,pc.y-20,k);
+  const pc=iso(P.x,P.y);const kl=1-Math.exp(-2.5*dt);P.lax=lerp(P.lax||0,((P.vx||0)-(P.vy||0))*32*.25,kl);P.lay=lerp(P.lay||0,((P.vx||0)+(P.vy||0))*16*.25,kl);const k=1-Math.exp(-6*dt);camX=lerp(camX,pc.x+P.lax,k);camY=lerp(camY,pc.y-20+P.lay,k);
   // zamanlayıcılar
   favT-=dt;if(favT<=0)rollFav();
   birdT-=dt;if(birdT<=0){Snd.bird();birdT=rnd(7,16)}
@@ -1152,16 +1163,16 @@ function drawBackpack(fill,t){const id=(G.wear&&G.wear.canta)||'bez';const c=wco
 function drawPlayer(t){const s=iso(P.x,P.y);const x=s.x,y=s.y;const f=P.face;ensureWardrobe();const W=G.wear||defaultWear(G.hero);
   const ride=G.vehicle===3;const lift=ride?14:G.vehicle===2?6:0;
   const crouch=P.act==='gather'&&P.swingT<1?Math.sin(P.swingT*Math.PI)*7:0;
-  const bob=P.moving&&!ride?Math.abs(Math.sin(P.walkT))*2.4:Math.sin(t*2.2)*.7;
+  const bob=!ride&&P.spdR>.05?(1-Math.cos(P.walkT*2))*.8*P.spdR+Math.sin(t*2.2)*.7*(1-P.spdR):Math.sin(t*2.2)*.7;
   const fem=G.hero==='f',skin='#f2c39b';
   shadow(ctx,x,y+2,ride?30:16,ride?10:7);
   drawVehicleBack(x,y,f);
-  ctx.save();ctx.translate(x,y-lift-bob);ctx.scale(f,1);
+  ctx.save();ctx.translate(x,y-lift-bob);ctx.scale(f,1);ctx.rotate(P.lean||0);
   // pelerin (arkada)
   if(W.dis==='pelerin'){const pc=wcol('pelerin'),w=Math.sin(t*3+P.walkT)*2;poly(ctx,[-9,-38+crouch,9,-38+crouch,14+w,-6,-15+w,-6],pc);ctx.strokeStyle='#f5c542';ctx.lineWidth=1.8;ctx.beginPath();ctx.moveTo(-15+w,-6);ctx.lineTo(14+w,-6);ctx.stroke();for(let i=0;i<4;i++)circ(ctx,-11+w+i*7,-9,1.1,'#f5c542')}
   // alt
   const isDress=CLOTHES[W.ust]&&CLOTHES[W.ust].dress;const al=isDress?'_bacak':W.alt,ac=isDress?'#000':wcol(al);
-  if(!ride&&G.vehicle!==2){const l=P.moving?Math.sin(P.walkT)*3.6:0;const shoe=(dx)=>{ctx.fillStyle='#f4f1ea';rr2(ctx,dx,-3.8,8.5,4.6,2.2);ctx.fill();ctx.fillStyle='#bfb7ab';ctx.fillRect(dx+.5,-.6,7.5,1.3);ctx.fillStyle='#e65c5c';ctx.fillRect(dx+2,-3,3,1)};
+  if(!ride&&G.vehicle!==2){const l=Math.sin(P.walkT)*3*(P.spdR||0);const shoe=(dx)=>{ctx.fillStyle='#f4f1ea';rr2(ctx,dx,-3.8,8.5,4.6,2.2);ctx.fill();ctx.fillStyle='#bfb7ab';ctx.fillRect(dx+.5,-.6,7.5,1.3);ctx.fillStyle='#e65c5c';ctx.fillRect(dx+2,-3,3,1)};
     if(al==='uzunetek'){shoe(-7.5+l);shoe(-.5-l);poly(ctx,[-9,-16,8,-16,11+l*.3,-2,-12-l*.3,-2],ac);ctx.strokeStyle='rgba(255,255,255,.35)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(-11.5,-4.5);ctx.lineTo(10.5,-4.5);ctx.stroke()}
     else if(al==='minietek'||al==='sort'||al==='kotsort'||al==='pileli'||al==='_bacak'){ctx.fillStyle=skin;rr2(ctx,-6.5+l,-10,5.5,8,2);ctx.fill();rr2(ctx,1-l,-10,5.5,8,2);ctx.fill();shoe(-8+l);shoe(-.5-l);
       if(al==='minietek'){poly(ctx,[-8,-17,7,-17,11,-8,-12,-8],ac);ctx.strokeStyle=tint(ac,-30);ctx.lineWidth=.8;for(let i=-8;i<=8;i+=4){ctx.beginPath();ctx.moveTo(i*.6,-16);ctx.lineTo(i*1.2,-8.5);ctx.stroke()}ctx.fillStyle='#fff';ctx.fillRect(-11,-9.5,21,1)}
@@ -1309,7 +1320,7 @@ let curShop='pazar';
 let PV=null,tailorBuy=false,wslot='ust';
 function openTailor(buy){ensureWardrobe();if(!G.wear)G.wear=defaultWear(G.hero);tailorBuy=buy;PV={wear:{...G.wear},col:{...G.col}};openPanel('tailor')}
 function drawPreview(){const c=document.getElementById('pvC');if(!c||!PV)return;const keep={w:G.wear,c:G.col,v:G.vehicle,say:P.say,fish:P.fish,mv:P.moving,face:P.face,sw:P.swingT};const old=ctx;const x=c.getContext('2d');x.setTransform(1,0,0,1,0,0);x.clearRect(0,0,c.width,c.height);const s=iso(P.x,P.y),k=3.3;x.setTransform(k,0,0,k,c.width/2-s.x*k,c.height*.93-s.y*k);
-  ctx=x;G.wear=PV.wear;G.col=PV.col;G.vehicle=0;P.say=null;P.fish=null;P.moving=false;P.face=1;P.swingT=1;try{drawPlayer(time)}catch(e){}ctx=old;G.wear=keep.w;G.col=keep.c;G.vehicle=keep.v;P.say=keep.say;P.fish=keep.fish;P.moving=keep.mv;P.face=keep.face;P.swingT=keep.sw}
+  ctx=x;G.wear=PV.wear;G.col=PV.col;G.vehicle=0;P.say=null;P.fish=null;P.moving=false;const sr=P.spdR,ln=P.lean;P.spdR=0;P.lean=0;P.face=1;P.swingT=1;try{drawPlayer(time)}catch(e){}P.spdR=sr;P.lean=ln;ctx=old;G.wear=keep.w;G.col=keep.c;G.vehicle=keep.v;P.say=keep.say;P.fish=keep.fish;P.moving=keep.mv;P.face=keep.face;P.swingT=keep.sw}
 function renderTailor(body,tabs,head){head.className='tailor';$('panelTitle').textContent=tailorBuy?'Terzi':'Gardırop';
   SLOTS.forEach(sl=>{const b=document.createElement('button');b.className='tab'+(wslot===sl.id?' on':'');b.textContent=sl.name;b.onclick=()=>{wslot=sl.id;renderPanel()};tabs.appendChild(b)});
   const top=document.createElement('div');top.className='pvBox';const cv2=document.createElement('canvas');cv2.id='pvC';cv2.width=240;cv2.height=250;top.appendChild(cv2);
@@ -1652,10 +1663,10 @@ let pickHero=G.hero||null;
 if(matchMedia('(pointer:coarse)').matches){const k=document.querySelector('#intro .keys');if(k)k.textContent='Dokun: yürü, kaz, topla · Kaz düğmesi: en yakın kaynak · Dükkânlara dokunup alışveriş yap'}
 document.querySelectorAll('.heroC').forEach(b=>{const h=b.dataset.h;b.querySelector('span').textContent=HEROES[h].desc;b.onclick=()=>{Snd.init();pickHero=h;document.querySelectorAll('.heroC').forEach(x=>x.classList.toggle('on',x===b));const sb=$('startBtn');sb.disabled=false;sb.textContent=`${HEROES[h].name} ile başla`;Snd.pickup(h==='f'?4:2)}});
 if(pickHero)document.querySelector(`.heroC[data-h="${pickHero}"]`).click();
-function drawPortraits(){if($('intro').classList.contains('hidden'))return;const keep={w:G.wear,h:G.hero,v:G.vehicle,say:P.say,fish:P.fish,mv:P.moving,face:P.face,sw:P.swingT};const old=ctx;
+function drawPortraits(){if($('intro').classList.contains('hidden'))return;const keep={sr:P.spdR,ln:P.lean,w:G.wear,h:G.hero,v:G.vehicle,say:P.say,fish:P.fish,mv:P.moving,face:P.face,sw:P.swingT};const old=ctx;
   document.querySelectorAll('.heroC').forEach(b=>{const c=b.querySelector('canvas');const x=c.getContext('2d');x.setTransform(1,0,0,1,0,0);x.clearRect(0,0,c.width,c.height);const s=iso(P.x,P.y);const k=3.1;x.setTransform(k,0,0,k,c.width/2-s.x*k,c.height*.93-s.y*k);
-    ctx=x;G.hero=b.dataset.h;G.wear=(keep.h===b.dataset.h&&keep.w)?keep.w:defaultWear(b.dataset.h);G.vehicle=0;P.say=null;P.fish=null;P.moving=false;P.face=b.dataset.h==='f'?1:-1;P.swingT=1;try{drawPlayer(time)}catch(e){}});
-  ctx=old;G.wear=keep.w;G.hero=keep.h;G.vehicle=keep.v;P.say=keep.say;P.fish=keep.fish;P.moving=keep.mv;P.face=keep.face;P.swingT=keep.sw}
+    ctx=x;G.hero=b.dataset.h;G.wear=(keep.h===b.dataset.h&&keep.w)?keep.w:defaultWear(b.dataset.h);G.vehicle=0;P.say=null;P.fish=null;P.moving=false;P.spdR=0;P.lean=0;P.face=b.dataset.h==='f'?1:-1;P.swingT=1;try{drawPlayer(time)}catch(e){}});
+  ctx=old;P.spdR=keep.sr;P.lean=keep.ln;G.wear=keep.w;G.hero=keep.h;G.vehicle=keep.v;P.say=keep.say;P.fish=keep.fish;P.moving=keep.mv;P.face=keep.face;P.swingT=keep.sw}
 $('startBtn').onclick=()=>{if(!pickHero)return;Snd.init();const first=!G.hero;G.hero=pickHero;ensureWardrobe();save();$('intro').classList.add('hidden');setTimeout(()=>{if(first)toast('Yakındaki kaynaklara tıkla ve toplamaya başla!',false,4);say(first?'Hadi Sarman, başlayalım.':'Yeniden merhaba, Sarman.')},300)};
 updateHud();
 if(SET.muted){Snd.muted=false;toggleMute()}
