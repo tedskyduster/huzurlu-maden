@@ -109,7 +109,15 @@ canvas#c{display:block;width:100vw;height:100vh;cursor:pointer;touch-action:none
 #intro .keys{font-size:13px;opacity:.85;margin:12px 0}
 #intro .btn{margin:8px auto 0;font-size:20px;padding:10px 26px}
 .hidden{display:none!important}
-@media (max-width:600px){#goldPill{font-size:18px}#bagPill{min-width:140px}.btn{font-size:13px;padding:6px 9px}.btn span.l{display:none}#fav{font-size:12px}}
+#actBtn{position:fixed;right:16px;bottom:64px;width:78px;height:78px;border-radius:50%;flex-direction:column;justify-content:center;gap:0;padding:0;z-index:6;display:none;background:radial-gradient(circle at 40% 35%,#fff7ea,#f2dfbf);font-size:14px}
+#actBtn.bite{background:radial-gradient(circle at 40% 35%,#ffd9d3,#f29a8a);animation:bob .5s infinite}
+@media (pointer:coarse){#actBtn{display:flex}}
+.btn,.heroC,.tab,.swc{touch-action:manipulation;-webkit-touch-callout:none}
+@media (max-width:600px){#goldPill{font-size:17px;padding:4px 10px}#bagPill{min-width:128px;font-size:13px;padding:4px 10px}#bagIcons{max-width:140px}
+  #btns{flex-direction:column;top:10px;right:10px;gap:6px}.btn{font-size:13px;padding:7px 8px}.btn span.l{display:none}
+  #fav{font-size:11px;bottom:10px;padding:4px 10px}#zone b{font-size:22px}#zone span{font-size:12px}#zone{top:20%}
+  #toast{top:auto;bottom:150px;flex-direction:column-reverse;width:86vw}.toast{font-size:13px;text-align:center}
+  #actBtn{bottom:52px;right:12px}}
 </style>
 </head>
 <body>
@@ -132,6 +140,7 @@ canvas#c{display:block;width:100vw;height:100vh;cursor:pointer;touch-action:none
   <button class="btn" id="bMute" title="Ses (M)"><svg viewBox="0 0 24 24" id="muteIco"><path d="M4 9h4l5-4v14l-5-4H4z" fill="#f5c542" stroke="#7a4e33" stroke-width="1.8"/><path d="M16 8c2 2 2 6 0 8M18.5 5.5c3.5 3.5 3.5 9.5 0 13" fill="none" stroke="#7a4e33" stroke-width="1.8" stroke-linecap="round"/></svg></button>
 </div>
 
+<button class="btn" id="actBtn" aria-label="Kaz"><svg viewBox="0 0 24 24" width="30" height="30"><path d="M6 19L16 9" stroke="#8a5a3b" stroke-width="2.6" stroke-linecap="round"/><path d="M9 5c4-2 8 0 10 4" fill="none" stroke="#9aa3ad" stroke-width="3" stroke-linecap="round"/></svg><b id="actTxt">Kaz</b></button>
 <button class="btn gold" id="sellPrompt">Hepsini Sat</button>
 <div id="fav" class="pill"></div>
 <div id="toast"></div>
@@ -778,12 +787,12 @@ let combo=0,comboT=0;
 // ---------- girdi ----------
 function screenToWorld(mx,my){const wx=(mx-CW/2)/ZOOM+camX,wy=(my-CH/2)/ZOOM+camY;return{wx,wy,...unIso(wx,wy)}}
 function forageAtScreen(wx,wy){let best=null,bd=20;for(const f of forage){if(!f.alive||f.grow<1)continue;const s=iso(f.x,f.y);const d=Math.hypot(s.x-wx,s.y-6-wy);if(d<bd){bd=d;best=f}}return best}
-function rockAtScreen(wx,wy){let best=null,bd=26;for(const r of rocks){if(!r.alive||r.grow<1)continue;const s=iso(r.x,r.y);const d=Math.hypot(s.x-wx,(s.y-14-wy)*1.1);if(d<bd){bd=d;best=r}}return best}
-function onTap(mx,my){
+function rockAtScreen(wx,wy,tol=26){let best=null,bd=tol;for(const r of rocks){if(!r.alive||r.grow<1)continue;const s=iso(r.x,r.y);const d=Math.hypot(s.x-wx,Math.max(0,Math.abs(s.y-16-wy)-10));if(d<bd){bd=d;best=r}}return best}
+function onTap(mx,my,touch){const tol=touch?46/ZOOM:26;
   Snd.init();const w=screenToWorld(mx,my);
   if(P.fish&&P.fish.state==='bite'){reelIn();return}
   const cs=iso(CAT.x,CAT.y);if(Math.hypot(w.wx-cs.x,w.wy-(cs.y-10))<18){setTarget(CAT);return}
-  const r=rockAtScreen(w.wx,w.wy)||forageAtScreen(w.wx,w.wy);
+  const r=rockAtScreen(w.wx,w.wy,tol)||forageAtScreen(w.wx,w.wy);
   if(r){setTarget(r);return}
   const bd=buildingAtScreen(w.wx,w.wy);if(bd){goShop(bd);return}
   const m=iso(MARKET.x,MARKET.y);if(Math.abs(w.wx-m.x)<52&&w.wy>m.y-80&&w.wy<m.y+12){P.target=null;stopFishing();P.sellTarget=true;P.path=findPath(Math.floor(P.x),Math.floor(P.y),Math.floor(SELL_SPOT.x),Math.floor(SELL_SPOT.y));return}
@@ -793,7 +802,9 @@ function onTap(mx,my){
   if(passable(tx,ty)){P.path=findPath(Math.floor(P.x),Math.floor(P.y),tx,ty);if(P.path&&P.path.length)P.path[P.path.length-1]={x:clamp(w.x,tx+.25,tx+.75),y:clamp(w.y,ty+.25,ty+.75)};clickMark={x:w.wx,y:w.wy,t:.6}}
 }
 let clickMark=null;
-cv.addEventListener('pointerdown',e=>{if(e.button!==0&&e.pointerType==='mouse')return;onTap(e.clientX,e.clientY)});
+cv.addEventListener('pointerdown',e=>{if(e.button!==0&&e.pointerType==='mouse')return;e.preventDefault();onTap(e.clientX,e.clientY,e.pointerType!=='mouse')});
+cv.addEventListener('contextmenu',e=>e.preventDefault());
+function actionPress(){Snd.init();if(P.fish&&P.fish.state==='bite'){reelIn();return}const r=nearestRock(REACH+.35)||nearestRock(4.5);if(r){setTarget(r);return}toast('Yakında kaynak yok. Biraz dolaşalım.')}
 addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;const k=e.key.toLowerCase();keys[k]=true;Snd.init();
   if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(k))e.preventDefault();
   if(k==='p'){if(panelOpen==='shop')closePanel();else openShop('pazar')}if(k==='g'){if(panelOpen==='tailor')closePanel();else openTailor(false)}if(k==='b')togglePanel('book');if(k==='m')toggleMute();if(k==='o')togglePanel('settings');if(k==='escape')closePanel();
@@ -920,7 +931,7 @@ function update(dt){
 }
 
 // ---------- çizim ----------
-function resize(){DPR=Math.min(2,devicePixelRatio||1);CW=innerWidth;CH=innerHeight;cv.width=CW*DPR;cv.height=CH*DPR;ZOOM=Math.min(CW,CH)<560?1.05:Math.min(CW,CH)<820?1.3:1.5}
+function resize(){DPR=Math.min(2,devicePixelRatio||1);CW=innerWidth;CH=innerHeight;cv.width=CW*DPR;cv.height=CH*DPR;ZOOM=Math.min(CW,CH)<560?1.3:Math.min(CW,CH)<820?1.3:1.5}
 addEventListener('resize',resize);resize();
 
 let F=0;// flaş miktarı
@@ -1528,6 +1539,7 @@ function sellAll(fromEl){const bc=bagCount();if(!bc){toast('Çantan boş. Biraz 
   const s=iso(P.x,P.y);floatText(s.x,s.y-60,'+'+total+' altın','#ffe066');const mi=nextMarketInfo();toast(`Hepsini sattın: +${total} altın`+(mi.nx&&marketLv()===MK.lv?` · Meydan: %${Math.floor(mi.prog*100)}`:''));
   setTimeout(()=>{$('goldPill').animate([{transform:'scale(1)'},{transform:'scale(1.15)'},{transform:'scale(1)'}],{duration:300})},700);
   updateHud();save();if(panelOpen)renderPanel()}
+$('actBtn').addEventListener('pointerdown',e=>{e.preventDefault();actionPress()});
 $('sellPrompt').addEventListener('click',e=>{Snd.init();sellAll(e.currentTarget)});
 
 // ---------- panel ----------
@@ -1637,6 +1649,7 @@ function renderPanel(){
 
 // ---------- başlat ----------
 let pickHero=G.hero||null;
+if(matchMedia('(pointer:coarse)').matches){const k=document.querySelector('#intro .keys');if(k)k.textContent='Dokun: yürü, kaz, topla · Kaz düğmesi: en yakın kaynak · Dükkânlara dokunup alışveriş yap'}
 document.querySelectorAll('.heroC').forEach(b=>{const h=b.dataset.h;b.querySelector('span').textContent=HEROES[h].desc;b.onclick=()=>{Snd.init();pickHero=h;document.querySelectorAll('.heroC').forEach(x=>x.classList.toggle('on',x===b));const sb=$('startBtn');sb.disabled=false;sb.textContent=`${HEROES[h].name} ile başla`;Snd.pickup(h==='f'?4:2)}});
 if(pickHero)document.querySelector(`.heroC[data-h="${pickHero}"]`).click();
 function drawPortraits(){if($('intro').classList.contains('hidden'))return;const keep={w:G.wear,h:G.hero,v:G.vehicle,say:P.say,fish:P.fish,mv:P.moving,face:P.face,sw:P.swingT};const old=ctx;
@@ -1647,7 +1660,7 @@ $('startBtn').onclick=()=>{if(!pickHero)return;Snd.init();const first=!G.hero;G.
 updateHud();
 if(SET.muted){Snd.muted=false;toggleMute()}
 let last=performance.now();
-function loop(now){const dt=Math.min(.05,(now-last)/1000);last=now;update(dt);render();drawPortraits();if(panelOpen==='tailor')drawPreview();requestAnimationFrame(loop)}
+function loop(now){const dt=Math.min(.05,(now-last)/1000);last=now;update(dt);render();drawPortraits();{const bite=P.fish&&P.fish.state==='bite';const at=$('actTxt');if(at&&at.textContent!==(bite?'Çek!':'Kaz')){at.textContent=bite?'Çek!':'Kaz'}$('actBtn').classList.toggle('bite',!!bite);$('actBtn').style.visibility=$('intro').classList.contains('hidden')?'':'hidden'}if(panelOpen==='tailor')drawPreview();requestAnimationFrame(loop)}
 requestAnimationFrame(loop);
 // test kancası
 window.__game={MK,villagers,marketLv,G,P,rocks,forage,animals,CAT,reelIn,startFishingAt,gems,stat,sellAll,openPanel,closePanel,onTap,iso,camera:()=>({camX,camY,ZOOM,CW,CH})};
